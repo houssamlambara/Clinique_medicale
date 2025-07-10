@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('rendezvous', function (Blueprint $table) {
             $table->id();
             $table->foreignId('patient_id')->constrained();
-            $table->foreignId('medecin_id ')->constrained();
-            $table->date("date_rdv");
+            $table->foreignId('medecin_id')->constrained();
+            $table->date('date_rdv');
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('rendezvouses');
+        Schema::dropIfExists('rendezvous');
     }
 };

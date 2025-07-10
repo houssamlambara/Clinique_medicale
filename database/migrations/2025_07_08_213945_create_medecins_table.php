@@ -13,11 +13,9 @@ return new class extends Migration
     {
         Schema::create('medecins', function (Blueprint $table) {
             $table->id();
-            $table->string("nom");
-            $table->string("prenom");
-            $table->string("specialite");
-            $table->string("email");
-            $table->string("password");
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('specialite');
+            $table->string('numero_licence')->unique();
             $table->timestamps();
         });
     }

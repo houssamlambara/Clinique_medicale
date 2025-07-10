@@ -13,11 +13,9 @@ return new class extends Migration
     {
         Schema::create('patients', function (Blueprint $table) {
             $table->id();
-            $table->string("nom");
-            $table->string("prenom");
-            $table->string("email");
-            $table->string("password");
-            $table->enum("genre", ["Homme", "Femme"]);
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->date('date_naissance');
+            $table->enum('genre', ['Homme', 'Femme']);
             $table->timestamps();
         });
     }

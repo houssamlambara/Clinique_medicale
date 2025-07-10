@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('consultations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('patient_id')->constrained();
-            $table->foreignId('medecin_id ')->constrained();
-            $table->decimal("montant");
-            $table->string("motif");
+            $table->foreignId('medecin_id')->constrained();
+            $table->decimal('montant', 10, 2);
+            $table->string('motif');
+            $table->enum('statut', ['en_cours', 'terminée', 'annulée'])->default('en_cours');
             $table->timestamps();
         });
     }

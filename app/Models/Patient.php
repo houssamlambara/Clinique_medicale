@@ -5,14 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Medecin extends Model
+class Patient extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'user_id',
-        'specialite',
-        'numero_licence'
+        'date_naissance',
+        'genre'
+    ];
+
+    protected $casts = [
+        'date_naissance' => 'date'
     ];
 
     // Relation vers User
@@ -22,9 +26,9 @@ class Medecin extends Model
     }
 
     // Relations principales
-    public function consultations()
+    public function dossiersMedicaux()
     {
-        return $this->hasMany(Consultations::class);
+        return $this->hasMany(DossierMedical::class);
     }
 
     public function rendezVous()

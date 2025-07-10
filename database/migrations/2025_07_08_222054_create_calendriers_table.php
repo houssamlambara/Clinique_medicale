@@ -13,8 +13,11 @@ return new class extends Migration
     {
         Schema::create('calendriers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('medecin_id ')->constrained();
-            $table->date("date");
+            $table->foreignId('medecin_id')->constrained();
+            $table->date('date');
+            $table->time('heure_debut')->nullable();
+            $table->time('heure_fin')->nullable();
+            $table->boolean('disponible')->default(true);
             $table->timestamps();
         });
     }
