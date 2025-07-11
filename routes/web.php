@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PatientController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -40,4 +41,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/comptable/dashboard', function () {
         return view('comptable.dashboard');
     })->name('comptable.dashboard');
+
+    // Routes de gestion des patients (accès médecin et secrétaire)
+    Route::middleware(['auth', 'role:medecin,secretaire'])->group(function () {
+        Route::resource('patients', PatientController::class);
+        Route::get('/patients/search', [PatientController::class, 'search'])->name('patients.search');
+    });
 });
