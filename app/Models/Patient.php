@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Patient extends Model
 {
@@ -12,27 +14,32 @@ class Patient extends Model
     protected $fillable = [
         'user_id',
         'date_naissance',
-        'genre'
+        'genre',
     ];
 
     protected $casts = [
-        'date_naissance' => 'date'
+        'date_naissance' => 'date',
     ];
 
-    // Relation vers User
-    public function user()
+    // Relations (SRP : Patient gère seulement ses relations)
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    // Relations principales
-    public function dossiersMedicaux()
+    public function dossierMedical(): HasOne
     {
-        return $this->hasMany(DossierMedical::class);
+        return $this->hasOne(DossierMedical::class);
     }
 
-    public function rendezVous()
+    // Méthodes utilitaires
+    public function getFullNameAttribute(): string
     {
-        return $this->hasMany(Rendezvous::class);
+        return $this->user->prenom . ' ' . $this->user->nom;
+    }
+
+    public function getAgeAttribute(): int
+    {
+        return $this->date_naissance->age;
     }
 }
