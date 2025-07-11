@@ -49,49 +49,55 @@ class AuthController extends Controller
             ]);
         }
 
-        // Créer l'utilisateur
-        $user = User::create([
-            'nom' => $request->nom,
-            'prenom' => $request->prenom,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'telephone' => $request->telephone,
-            'role' => $request->role,
-        ]);
+        try {
+            // Créer l'utilisateur
+            $user = User::create([
+                'nom' => $request->nom,
+                'prenom' => $request->prenom,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'telephone' => $request->telephone,
+                'role' => $request->role,
+            ]);
 
-        // Créer l'entité spécifique
-        switch ($request->role) {
-            case 'patient':
-                Patient::create([
-                    'user_id' => $user->id,
-                    'date_naissance' => $request->date_naissance,
-                    'genre' => $request->genre,
-                ]);
-                break;
+            // Créer l'entité spécifique
+            switch ($request->role) {
+                case 'patient':
+                    Patient::create([
+                        'user_id' => $user->id,
+                        'date_naissance' => $request->date_naissance,
+                        'genre' => $request->genre,
+                    ]);
+                    break;
 
-            case 'medecin':
-                Medecin::create([
-                    'user_id' => $user->id,
-                    'specialite' => $request->specialite,
-                    'numero_licence' => $request->numero_licence,
-                ]);
-                break;
-        }
+                case 'medecin':
+                    Medecin::create([
+                        'user_id' => $user->id,
+                        'specialite' => $request->specialite,
+                        'numero_licence' => $request->numero_licence,
+                    ]);
+                    break;
+            }
 
-        Auth::login($user);
-        
-        // Redirection selon le rôle après inscription
-        switch ($user->role) {
-            case 'patient':
-                return redirect('/patient/dashboard');
-            case 'medecin':
-                return redirect('/medecin/dashboard');
-            case 'secretaire':
-                return redirect('/secretaire/dashboard');
-            case 'comptable':
-                return redirect('/comptable/dashboard');
-            default:
-                return redirect('/dashboard');
+            // Créer le token Sanctum
+            $token = $user->createToken('auth-token')->plainTextToken;
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Inscription réussie',
+                'data' => [
+                    'user' => $user,
+                    'token' => $token,
+                    'token_type' => 'Bearer'
+                ]
+            ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de l\'inscription',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -102,38 +108,53 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        if (Auth::attempt([
-            'email' => $request->email,
-            'password' => $request->password
-        ], $request->boolean('remember'))) {
-            $request->session()->regenerate();
-            
-            // Redirection selon le rôle
-            $user = Auth::user();
-            switch ($user->role) {
-                case 'patient':
-                    return redirect('/patient/dashboard');
-                case 'medecin':
-                    return redirect('/medecin/dashboard');
-                case 'secretaire':
-                    return redirect('/secretaire/dashboard');
-                case 'comptable':
-                    return redirect('/comptable/dashboard');
-                default:
-                    return redirect('/dashboard');
-            }
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Identifiants invalides'
+            ], 401);
         }
 
-        throw ValidationException::withMessages([
-            'email' => ['Les identifiants fournis ne correspondent pas à nos enregistrements.'],
+        // Supprimer les anciens tokens (optionnel)
+        $user->tokens()->delete();
+
+        // Créer un nouveau token
+        $token = $user->createToken('auth-token')->plainTextToken;
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Connexion réussie',
+            'data' => [
+                'user' => $user,
+                'token' => $token,
+                'token_type' => 'Bearer'
+            ]
         ]);
     }
 
     public function logout(Request $request)
     {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        return redirect('/');
+        // Supprimer le token actuel
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Déconnexion réussie'
+        ]);
+    }
+
+    /**
+     * Obtenir les informations de l'utilisateur connecté
+     */
+    public function user(Request $request)
+    {
+        $user = $request->user();
+        
+        return response()->json([
+            'success' => true,
+            'data' => $user
+        ]);
     }
 }
