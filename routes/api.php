@@ -10,6 +10,7 @@ use App\Http\Controllers\RendezvousController;
 use App\Http\Controllers\MedecinController;
 use App\Http\Controllers\InfirmiersController;
 use App\Http\Controllers\MaterielsController;
+use App\Http\Controllers\ConsultationsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,17 +31,17 @@ Route::post('/auth/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     // Informations de l'utilisateur connecté
     Route::get('/user', [AuthController::class, 'user']);
-    
+
     // Déconnexion
     Route::post('/auth/logout', [AuthController::class, 'logout']);
-    
+
     // Routes de gestion des patients
     Route::get('/patients', [PatientController::class, 'index'])->name('patients.index');
     Route::get('/patients/{id}', [PatientController::class, 'show'])->name('patients.show');
     Route::put('/patients/{id}', [PatientController::class, 'update'])->name('patients.update');
     Route::delete('/patients/{id}', [PatientController::class, 'destroy'])->name('patients.destroy');
     Route::get('patients/search', [PatientController::class, 'search'])->name('patients.search');
-    
+
     // Routes de gestion des dossiers médicaux
     Route::post('dossiers', [DossierMedicalController::class, 'store'])->name('dossiers.store');
     Route::get('dossiers', [DossierMedicalController::class, 'index'])->name('dossiers.index');
@@ -48,15 +49,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('dossiers/{id}', [DossierMedicalController::class, 'destroy'])->name('dossiers.destroy');
     Route::put('dossiers/{id}', [DossierMedicalController::class, 'update'])->name('dossiers.update');
     Route::get('dossiers/{id}', [DossierMedicalController::class, 'show'])->name('dossiers.show');
-    
+
     // Routes de gestion des prescriptions
     Route::get('/prescriptions', [PrescriptionController::class, 'index'])->name('prescriptions.index');
     Route::get('/prescriptions/{id}', [PrescriptionController::class, 'show'])->name('prescriptions.show');
     Route::post('/prescriptions', [PrescriptionController::class, 'store'])->name('prescriptions.store');
     Route::put('/prescriptions/{id}', [PrescriptionController::class, 'update'])->name('prescriptions.update');
     Route::delete('/prescriptions/{id}', [PrescriptionController::class, 'destroy'])->name('prescriptions.destroy');
-    Route::get('/prescriptions/patient/{patientId}', [PrescriptionController::class, 'getByPatient'])->name('prescriptions.by-patient');    
-    
+    Route::get('/prescriptions/patient/{patientId}', [PrescriptionController::class, 'getByPatient'])->name('prescriptions.by-patient');
+
     // Routes de gestion des rendez-vous
     Route::get('/rendezvous', [RendezvousController::class, 'index'])->name('rendezvous.index');
     Route::get('/rendezvous/{id}', [RendezvousController::class, 'show'])->name('rendezvous.show');
@@ -65,7 +66,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/rendezvous/{id}', [RendezvousController::class, 'destroy'])->name('rendezvous.destroy');
     Route::get('/rendezvous/patient/{patientId}', [RendezvousController::class, 'getByPatient'])->name('rendezvous.by-patient');
     Route::get('/rendezvous/medecin/{medecinId}', [RendezvousController::class, 'getByMedecin'])->name('rendezvous.by-medecin');
-    
+
     // Routes de gestion des médecins
     Route::get('/medecins', [MedecinController::class, 'index'])->name('medecins.index');
     Route::get('/medecins/{id}', [MedecinController::class, 'show'])->name('medecins.show');
@@ -73,7 +74,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/medecins/{id}', [MedecinController::class, 'update'])->name('medecins.update');
     Route::delete('/medecins/{id}', [MedecinController::class, 'destroy'])->name('medecins.destroy');
     Route::get('/medecins/specialite/{specialite}', [MedecinController::class, 'getBySpecialite'])->name('medecins.by-specialite');
-    
+
     // Routes de gestion des infirmiers
     Route::get('/infirmiers', [InfirmiersController::class, 'index'])->name('infirmiers.index');
     Route::get('/infirmiers/{id}', [InfirmiersController::class, 'show'])->name('infirmiers.show');
@@ -81,7 +82,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/infirmiers/{id}', [InfirmiersController::class, 'update'])->name('infirmiers.update');
     Route::delete('/infirmiers/{id}', [InfirmiersController::class, 'destroy'])->name('infirmiers.destroy');
     Route::get('/infirmiers/specialite/{specialite}', [InfirmiersController::class, 'getBySpecialite'])->name('infirmiers.by-specialite');
-    
+
     // Routes de gestion des matériels
     Route::get('/materiels', [MaterielsController::class, 'index'])->name('materiels.index');
     Route::get('/materiels/{id}', [MaterielsController::class, 'show'])->name('materiels.show');
@@ -90,5 +91,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/materiels/{id}', [MaterielsController::class, 'destroy'])->name('materiels.destroy');
     Route::get('/materiels/nom/{nom}', [MaterielsController::class, 'getByNom'])->name('materiels.by-nom');
     Route::get('/materiels/description/{description}', [MaterielsController::class, 'getByDescription'])->name('materiels.by-description');
-    
+
+    // Routes de gestion des consultations
+    Route::post('/consultations', [ConsultationsController::class, 'store'])->name('consultations.store');
+    Route::get('/consultations', [ConsultationsController::class, 'index'])->name('consultations.index');
+    Route::get('/consultations/{id}', [ConsultationsController::class, 'show'])->name('consultations.show');
+    Route::put('/consultations/{id}', [ConsultationsController::class, 'update'])->name('consultations.update');
+    Route::delete('/consultations/{id}', [ConsultationsController::class, 'destroy'])->name('consultations.destroy');
+    Route::get('/consultations/patient/{patientId}', [ConsultationsController::class, 'getByPatient'])->name('consultations.by-patient');
+    Route::get('/consultations/medecin/{medecinId}', [ConsultationsController::class, 'getByMedecin'])->name('consultations.by-medecin');
+    Route::get('/consultations/statut/{statut}', [ConsultationsController::class, 'getByStatut'])->name('consultations.by-statut');
 });
