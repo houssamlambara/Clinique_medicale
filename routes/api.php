@@ -5,6 +5,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DossierMedicalController;
+use App\Http\Controllers\PrescriptionController;
+use App\Http\Controllers\RendezvousController;
+use App\Http\Controllers\MedecinController;
+use App\Http\Controllers\InfirmiersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,10 +41,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('patients/search', [PatientController::class, 'search'])->name('patients.search');
     
     // Routes de gestion des dossiers médicaux
-    Route::apiResource('dossiers-medicaux', DossierMedicalController::class);
-    Route::get('dossiers-medicaux/patient/{patientId}', [DossierMedicalController::class, 'getByPatient']);
-    Route::post('dossiers-medicaux/{id}/antecedent', [DossierMedicalController::class, 'addAntecedent']);
-    Route::post('dossiers-medicaux/{id}/allergie', [DossierMedicalController::class, 'addAllergie']);
-    Route::get('dossiers-medicaux/{id}/historique', [DossierMedicalController::class, 'getHistorique']);
+    Route::post('dossiers', [DossierMedicalController::class, 'store'])->name('dossiers.store');
+    Route::get('dossiers', [DossierMedicalController::class, 'index'])->name('dossiers.index');
+    Route::get('dossiers/patient/{patientId}', [DossierMedicalController::class, 'getByPatient']);
+    Route::delete('dossiers/{id}', [DossierMedicalController::class, 'destroy'])->name('dossiers.destroy');
+    Route::put('dossiers/{id}', [DossierMedicalController::class, 'update'])->name('dossiers.update');
+    Route::get('dossiers/{id}', [DossierMedicalController::class, 'show'])->name('dossiers.show');
+    
+    // Routes de gestion des prescriptions
+    Route::get('/prescriptions', [PrescriptionController::class, 'index'])->name('prescriptions.index');
+    Route::get('/prescriptions/{id}', [PrescriptionController::class, 'show'])->name('prescriptions.show');
+    Route::post('/prescriptions', [PrescriptionController::class, 'store'])->name('prescriptions.store');
+    Route::put('/prescriptions/{id}', [PrescriptionController::class, 'update'])->name('prescriptions.update');
+    Route::delete('/prescriptions/{id}', [PrescriptionController::class, 'destroy'])->name('prescriptions.destroy');
+    Route::get('/prescriptions/patient/{patientId}', [PrescriptionController::class, 'getByPatient'])->name('prescriptions.by-patient');    
     
 });

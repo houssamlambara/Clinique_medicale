@@ -61,24 +61,13 @@ class PatientController extends Controller
             // Créer automatiquement un dossier médical vide
             $this->dossierRepository->create([
                 'patient_id' => $patient->id,
-                'groupe_sanguin' => null,
-                'antecedents' => [],
-                'allergies' => [],
-                'notes_medicales' => '',
+                'note' => '',
             ]);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Patient créé avec succès',
-                'data' => $patient
-            ], 201);
+            return $this->successResponse($patient, 'Patient créé avec succès', 201);
 
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erreur lors de la création du patient',
-                'error' => $e->getMessage()
-            ], 500);
+            return $this->serverErrorResponse('Erreur lors de la création du patient', $e->getMessage());
         }
     }
 
