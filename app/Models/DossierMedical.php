@@ -13,17 +13,12 @@ class DossierMedical extends Model
 
     protected $fillable = [
         'patient_id',
-        'groupe_sanguin',
-        'antecedents',
-        'allergies',
-        'notes_medicales',
+        // 'groupe_sanguin',
+        // 'antecedents',
+        // 'allergies',
+        'note',
     ];
-
-    protected $casts = [
-        'antecedents' => 'array',
-        'allergies' => 'array',
-    ];
-
+    
     // Relations (SRP : DossierMedical gère seulement ses relations)
     public function patient(): BelongsTo
     {
@@ -35,34 +30,5 @@ class DossierMedical extends Model
         return $this->hasMany(Prescription::class);
     }
 
-    // Méthodes utilitaires
-    public function addAntecedent(string $antecedent): void
-    {
-        $antecedents = $this->antecedents ?? [];
-        $antecedents[] = [
-            'antecedent' => $antecedent,
-            'date_ajout' => now()->toDateString()
-        ];
-        $this->update(['antecedents' => $antecedents]);
-    }
 
-    public function addAllergie(string $allergie): void
-    {
-        $allergies = $this->allergies ?? [];
-        $allergies[] = [
-            'allergie' => $allergie,
-            'date_ajout' => now()->toDateString()
-        ];
-        $this->update(['allergies' => $allergies]);
-    }
-
-    public function getAntecedentsListAttribute(): array
-    {
-        return collect($this->antecedents ?? [])->pluck('antecedent')->toArray();
-    }
-
-    public function getAllergiesListAttribute(): array
-    {
-        return collect($this->allergies ?? [])->pluck('allergie')->toArray();
-    }
 }

@@ -18,7 +18,7 @@ class DossierMedicalController extends Controller
 
     public function index(): JsonResponse
     {
-        $dossiers = DossierMedical::with('patient.user')->get();
+        $dossiers = $this->dossierRepository->getAll();
         return response()->json([
             'success' => true,
             'data' => $dossiers
@@ -27,8 +27,8 @@ class DossierMedicalController extends Controller
 
     public function show(int $id): JsonResponse
     {
-        $dossier = DossierMedical::with('patient.user', 'prescriptions')->find($id);
-        
+        $dossier = $this->dossierRepository->findById($id);
+
         if (!$dossier) {
             return response()->json([
                 'success' => false,
@@ -46,7 +46,7 @@ class DossierMedicalController extends Controller
     {
         $request->validate([
             'patient_id' => 'required|exists:patients,id',
-            'groupe_sanguin' => 'nullable|string|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
+            // 'groupe_sanguin' => 'nullable|string|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
             'note' => 'nullable|string',
         ]);
 
@@ -58,7 +58,6 @@ class DossierMedicalController extends Controller
                 'message' => 'Dossier médical créé avec succès',
                 'data' => $dossier
             ], 201);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -71,13 +70,13 @@ class DossierMedicalController extends Controller
     public function update(Request $request, int $id): JsonResponse
     {
         $request->validate([
-            'groupe_sanguin' => 'sometimes|string|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
+            // 'groupe_sanguin' => 'sometimes|string|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
             'note' => 'sometimes|string',
         ]);
 
         try {
-            $dossier = DossierMedical::find($id);
-            
+            $dossier = $this->dossierRepository->update($id, $request->all());
+
             if (!$dossier) {
                 return response()->json([
                     'success' => false,
@@ -85,14 +84,11 @@ class DossierMedicalController extends Controller
                 ], 404);
             }
 
-            $dossier->update($request->all());
-
             return response()->json([
                 'success' => true,
                 'message' => 'Dossier médical mis à jour avec succès',
-                'data' => $dossier->fresh(['patient.user'])
+                'data' => $dossier
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -105,8 +101,8 @@ class DossierMedicalController extends Controller
     public function destroy(int $id): JsonResponse
     {
         try {
-            $dossier = DossierMedical::find($id);
-            
+            $dossier = $this->dossierRepository->delete($id);
+
             if (!$dossier) {
                 return response()->json([
                     'success' => false,
@@ -114,13 +110,10 @@ class DossierMedicalController extends Controller
                 ], 404);
             }
 
-            $dossier->delete();
-
             return response()->json([
                 'success' => true,
                 'message' => 'Dossier médical supprimé avec succès'
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -134,7 +127,7 @@ class DossierMedicalController extends Controller
     public function getByPatient(int $patientId): JsonResponse
     {
         $dossier = $this->dossierRepository->getByPatientId($patientId);
-        
+
         if (!$dossier) {
             return response()->json([
                 'success' => false,
@@ -147,6 +140,4 @@ class DossierMedicalController extends Controller
             'data' => $dossier
         ]);
     }
-
-
 }
