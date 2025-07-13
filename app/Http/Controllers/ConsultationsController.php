@@ -49,7 +49,7 @@ class ConsultationsController extends Controller
             'medecin_id' => 'required|exists:medecins,id',
             'montant' => 'required|numeric|min:0',
             'motif' => 'required|string|max:500',
-            'statut' => 'sometimes|in:en_cours,terminer,annuler'
+            'statut' => 'sometimes|in:en_cours,terminée,annulée'
         ]);
 
         try {
@@ -84,7 +84,7 @@ class ConsultationsController extends Controller
             'medecin_id' => 'sometimes|exists:medecins,id',
             'montant' => 'sometimes|numeric|min:0',
             'motif' => 'sometimes|string|max:500',
-            'statut' => 'sometimes|in:en_cours,terminer,annuler'
+            'statut' => 'sometimes|in:en_cours,terminée,annulée'
         ]);
 
         try {

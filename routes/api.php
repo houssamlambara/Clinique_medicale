@@ -11,6 +11,7 @@ use App\Http\Controllers\MedecinController;
 use App\Http\Controllers\InfirmiersController;
 use App\Http\Controllers\MaterielsController;
 use App\Http\Controllers\ConsultationsController;
+use App\Http\Controllers\FactureController;
 
 /*
 |--------------------------------------------------------------------------
@@ -101,4 +102,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/consultations/patient/{patientId}', [ConsultationsController::class, 'getByPatient'])->name('consultations.by-patient');
     Route::get('/consultations/medecin/{medecinId}', [ConsultationsController::class, 'getByMedecin'])->name('consultations.by-medecin');
     Route::get('/consultations/statut/{statut}', [ConsultationsController::class, 'getByStatut'])->name('consultations.by-statut');
+
+    // Routes de gestion des factures
+    Route::post('/factures', [FactureController::class, 'store'])->name('factures.store');
+    Route::get('/factures', [FactureController::class, 'index'])->name('factures.index');
+    Route::get('/factures/non-payer', [FactureController::class, 'getNonPayer'])->name('factures.non-payees');
+    Route::get('/factures/payer', [FactureController::class, 'getPayer'])->name('factures.payees');
+    Route::get('/factures/consultation/{consultationId}', [FactureController::class, 'getByConsultation'])->name('factures.by-consultation');
+    Route::get('/factures/{id}', [FactureController::class, 'show'])->name('factures.show');
+    Route::put('/factures/{id}', [FactureController::class, 'update'])->name('factures.update');
+    Route::delete('/factures/{id}', [FactureController::class, 'destroy'])->name('factures.destroy');
+    Route::post('/factures/{id}/payer', [FactureController::class, 'marquerCommePayer'])->name('factures.marquer-payee');
 });
