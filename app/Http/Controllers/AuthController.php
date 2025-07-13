@@ -31,7 +31,7 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|min:3',
             'telephone' => 'required|string|max:20',
-            'role' => 'required|in:patient,medecin,secretaire,comptable',
+            'role' => 'required|in:patient,medecin,infirmier,comptable',
         ]);
 
         // Validation selon le rôle
