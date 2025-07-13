@@ -65,4 +65,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/rendezvous/patient/{patientId}', [RendezvousController::class, 'getByPatient'])->name('rendezvous.by-patient');
     Route::get('/rendezvous/medecin/{medecinId}', [RendezvousController::class, 'getByMedecin'])->name('rendezvous.by-medecin');
     
+    // Routes de gestion des médecins
+    Route::get('/medecins', [MedecinController::class, 'index'])->name('medecins.index');
+    Route::get('/medecins/{id}', [MedecinController::class, 'show'])->name('medecins.show');
+    Route::post('/medecins', [MedecinController::class, 'store'])->name('medecins.store');
+    Route::put('/medecins/{id}', [MedecinController::class, 'update'])->name('medecins.update');
+    Route::delete('/medecins/{id}', [MedecinController::class, 'destroy'])->name('medecins.destroy');
+    Route::get('/medecins/specialite/{specialite}', [MedecinController::class, 'getBySpecialite'])->name('medecins.by-specialite');
+    
+    
 });
