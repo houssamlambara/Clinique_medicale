@@ -73,5 +73,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/medecins/{id}', [MedecinController::class, 'destroy'])->name('medecins.destroy');
     Route::get('/medecins/specialite/{specialite}', [MedecinController::class, 'getBySpecialite'])->name('medecins.by-specialite');
     
+    // Routes de gestion des infirmiers
+    Route::get('/infirmiers', [InfirmiersController::class, 'index'])->name('infirmiers.index');
+    Route::get('/infirmiers/{id}', [InfirmiersController::class, 'show'])->name('infirmiers.show');
+    Route::post('/infirmiers', [InfirmiersController::class, 'store'])->name('infirmiers.store');
+    Route::put('/infirmiers/{id}', [InfirmiersController::class, 'update'])->name('infirmiers.update');
+    Route::delete('/infirmiers/{id}', [InfirmiersController::class, 'destroy'])->name('infirmiers.destroy');
+    Route::get('/infirmiers/specialite/{specialite}', [InfirmiersController::class, 'getBySpecialite'])->name('infirmiers.by-specialite');
     
 });
