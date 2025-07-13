@@ -9,6 +9,7 @@ use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\RendezvousController;
 use App\Http\Controllers\MedecinController;
 use App\Http\Controllers\InfirmiersController;
+use App\Http\Controllers\MaterielsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -80,5 +81,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/infirmiers/{id}', [InfirmiersController::class, 'update'])->name('infirmiers.update');
     Route::delete('/infirmiers/{id}', [InfirmiersController::class, 'destroy'])->name('infirmiers.destroy');
     Route::get('/infirmiers/specialite/{specialite}', [InfirmiersController::class, 'getBySpecialite'])->name('infirmiers.by-specialite');
+    
+    // Routes de gestion des matériels
+    Route::get('/materiels', [MaterielsController::class, 'index'])->name('materiels.index');
+    Route::get('/materiels/{id}', [MaterielsController::class, 'show'])->name('materiels.show');
+    Route::post('/materiels', [MaterielsController::class, 'store'])->name('materiels.store');
+    Route::put('/materiels/{id}', [MaterielsController::class, 'update'])->name('materiels.update');
+    Route::delete('/materiels/{id}', [MaterielsController::class, 'destroy'])->name('materiels.destroy');
+    Route::get('/materiels/nom/{nom}', [MaterielsController::class, 'getByNom'])->name('materiels.by-nom');
+    Route::get('/materiels/description/{description}', [MaterielsController::class, 'getByDescription'])->name('materiels.by-description');
     
 });
