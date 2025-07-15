@@ -12,6 +12,7 @@ use App\Http\Controllers\InfirmiersController;
 use App\Http\Controllers\MaterielsController;
 use App\Http\Controllers\ConsultationsController;
 use App\Http\Controllers\FactureController;
+use App\Http\Controllers\DepenseController;
 
 /*
 |--------------------------------------------------------------------------
@@ -106,11 +107,22 @@ Route::middleware('auth:sanctum')->group(function () {
     // Routes de gestion des factures
     Route::post('/factures', [FactureController::class, 'store'])->name('factures.store');
     Route::get('/factures', [FactureController::class, 'index'])->name('factures.index');
-    Route::get('/factures/non-payer', [FactureController::class, 'getNonPayer'])->name('factures.non-payees');
-    Route::get('/factures/payer', [FactureController::class, 'getPayer'])->name('factures.payees');
+    Route::get('/factures/non-payer', [FactureController::class, 'getNonPayer'])->name('factures.non-payer');
+    Route::get('/factures/payer', [FactureController::class, 'getPayer'])->name('factures.payer');
     Route::get('/factures/consultation/{consultationId}', [FactureController::class, 'getByConsultation'])->name('factures.by-consultation');
     Route::get('/factures/{id}', [FactureController::class, 'show'])->name('factures.show');
     Route::put('/factures/{id}', [FactureController::class, 'update'])->name('factures.update');
     Route::delete('/factures/{id}', [FactureController::class, 'destroy'])->name('factures.destroy');
     Route::post('/factures/{id}/payer', [FactureController::class, 'marquerCommePayer'])->name('factures.marquer-payee');
+
+    // Routes de gestion des dépenses
+    Route::post('/depenses', [DepenseController::class, 'store'])->name('depenses.store');
+    Route::get('/depenses', [DepenseController::class, 'index'])->name('depenses.index');
+    Route::get('/depenses/non-payer', [DepenseController::class, 'getNonPayer'])->name('depenses.non-payer');
+    Route::get('/depenses/payer', [DepenseController::class, 'getPayer'])->name('depenses.payer');
+    Route::get('/depenses/{id}', [DepenseController::class, 'show'])->name('depenses.show');
+    Route::put('/depenses/{id}', [DepenseController::class, 'update'])->name('depenses.update');
+    Route::delete('/depenses/{id}', [DepenseController::class, 'destroy'])->name('depenses.destroy');
+    Route::post('/depenses/{id}/payer', [DepenseController::class, 'marquerCommePayer'])->name('depenses.marquer-payee');
+
 });
