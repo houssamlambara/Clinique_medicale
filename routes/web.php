@@ -30,6 +30,12 @@ Route::get('/rendezvous', function (Request $request) {
     return view('rendezvous.index');
 })->name('rendezvous.index');
 
+// Route pour la liste des consultations - Accès libre
+Route::get('/consultations', function (Request $request) {
+    Log::info('Accès libre à /consultations');
+    return view('consultations.index');
+})->name('consultations.index');
+
 // Route pour le dashboard médecin - Accès libre
 Route::get('/medecin/dashboard', function (Request $request) {
     Log::info('Accès libre à /medecin/dashboard');

@@ -53,25 +53,6 @@
                 </button>
             </div>
         </div>
-
-        <!-- Contenu -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Rendez-vous -->
-            <div class="bg-white rounded-lg shadow p-6">
-                <h3 class="text-lg font-bold mb-4">Mes Rendez-vous</h3>
-                <div id="rendezvous-list">
-                    <p class="text-gray-500">Chargement...</p>
-                </div>
-            </div>
-
-            <!-- Consultations -->
-            <div class="bg-white rounded-lg shadow p-6">
-                <h3 class="text-lg font-bold mb-4">Mes Consultations</h3>
-                <div id="consultations-list">
-                    <p class="text-gray-500">Chargement...</p>
-                </div>
-            </div>
-        </div>
     </main>
 
     <script>
