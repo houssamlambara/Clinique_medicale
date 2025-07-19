@@ -123,11 +123,14 @@ class AuthController extends Controller
         // Créer un nouveau token
         $token = $user->createToken('auth-token')->plainTextToken;
 
+        // Charger les informations complètes selon le rôle
+        $userData = $this->getUserCompleteData($user);
+
         return response()->json([
             'success' => true,
             'message' => 'Connexion réussie',
             'data' => [
-                'user' => $user,
+                'user' => $userData,
                 'token' => $token,
                 'token_type' => 'Bearer'
             ]
@@ -155,6 +158,101 @@ class AuthController extends Controller
         return response()->json([
             'success' => true,
             'data' => $user
+        ]);
+    }
+
+    /**
+     * Récupère les informations complètes d'un utilisateur selon son rôle
+     */
+    private function getUserCompleteData(User $user): array
+    {
+        $userData = [
+            'id' => $user->id,
+            'nom' => $user->nom,
+            'prenom' => $user->prenom,
+            'email' => $user->email,
+            'telephone' => $user->telephone,
+            'role' => $user->role,
+        ];
+
+        // Ajouter les informations spécifiques selon le rôle
+        switch ($user->role) {
+            case 'patient':
+                $patient = $user->patient;
+                if ($patient) {
+                    $userData['patient'] = [
+                        'id' => $patient->id,
+                        'date_naissance' => $patient->date_naissance,
+                        'genre' => $patient->genre, // 'Homme' ou 'Femme'
+                        'age' => $patient->age,
+                        'full_name' => $patient->full_name,
+                    ];
+                }
+                break;
+
+            case 'medecin':
+                $medecin = $user->medecin;
+                if ($medecin) {
+                    $userData['medecin'] = [
+                        'id' => $medecin->id,
+                        'specialite' => $medecin->specialite,
+                        'numero_licence' => $medecin->numero_licence,
+                    ];
+                }
+                break;
+
+            case 'infirmier':
+                $infirmier = $user->infirmier;
+                if ($infirmier) {
+                    $userData['infirmier'] = [
+                        'id' => $infirmier->id,
+                        'specialite' => $infirmier->specialite,
+                        'numero_licence' => $infirmier->numero_licence,
+                    ];
+                }
+                break;
+
+            case 'secretaire':
+            case 'comptable':
+                // Pour les secrétaires et comptables, pas d'informations supplémentaires nécessaires
+                break;
+
+            default:
+                // Rôle non reconnu
+                break;
+        }
+
+        return $userData;
+    }
+    
+    public function profile(Request $request)
+    {
+        $user = $request->user();
+        $userData = $this->getUserCompleteData($user);
+
+        return response()->json([
+            'success' => true,
+            'data' => $userData
+        ]);
+    }
+
+
+    public function getUserById($id)
+    {
+        $user = User::find($id);
+        
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Utilisateur non trouvé'
+            ], 404);
+        }
+
+        $userData = $this->getUserCompleteData($user);
+
+        return response()->json([
+            'success' => true,
+            'data' => $userData
         ]);
     }
 }

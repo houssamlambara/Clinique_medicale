@@ -123,7 +123,6 @@ class DossierMedicalController extends Controller
         }
     }
 
-    // Obtenir le dossier médical d'un patient
     public function getByPatient(int $patientId): JsonResponse
     {
         $dossier = $this->dossierRepository->getByPatientId($patientId);

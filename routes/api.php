@@ -29,15 +29,26 @@ use App\Http\Controllers\DepenseController;
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
 
+// Routes de rendez-vous (temporairement publiques pour test)
+Route::get('/rendezvous', [RendezvousController::class, 'index'])->name('rendezvous.index');
+Route::get('/rendezvous/{id}', [RendezvousController::class, 'show'])->name('rendezvous.show');
+Route::post('/rendezvous', [RendezvousController::class, 'store'])->name('rendezvous.store');
+Route::put('/rendezvous/{id}', [RendezvousController::class, 'update'])->name('rendezvous.update');
+Route::delete('/rendezvous/{id}', [RendezvousController::class, 'destroy'])->name('rendezvous.destroy');
+Route::get('/rendezvous/patient/{patientId}', [RendezvousController::class, 'getByPatient'])->name('rendezvous.by-patient');
+Route::get('/rendezvous/medecin/{medecinId}', [RendezvousController::class, 'getByMedecin'])->name('rendezvous.by-medecin');
+
 // Routes protégées par authentification
 Route::middleware('auth:sanctum')->group(function () {
     // Informations de l'utilisateur connecté
     Route::get('/user', [AuthController::class, 'user']);
+    Route::get('/profile', [AuthController::class, 'profile']);
+    Route::get('/users/{id}', [AuthController::class, 'getUserById']);
 
     // Déconnexion
     Route::post('/auth/logout', [AuthController::class, 'logout']);
 
-    // Routes de gestion des patients
+    // Routes de gestion des patients 
     Route::get('/patients', [PatientController::class, 'index'])->name('patients.index');
     Route::get('/patients/{id}', [PatientController::class, 'show'])->name('patients.show');
     Route::put('/patients/{id}', [PatientController::class, 'update'])->name('patients.update');
@@ -59,15 +70,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/prescriptions/{id}', [PrescriptionController::class, 'update'])->name('prescriptions.update');
     Route::delete('/prescriptions/{id}', [PrescriptionController::class, 'destroy'])->name('prescriptions.destroy');
     Route::get('/prescriptions/patient/{patientId}', [PrescriptionController::class, 'getByPatient'])->name('prescriptions.by-patient');
-
-    // Routes de gestion des rendez-vous
-    Route::get('/rendezvous', [RendezvousController::class, 'index'])->name('rendezvous.index');
-    Route::get('/rendezvous/{id}', [RendezvousController::class, 'show'])->name('rendezvous.show');
-    Route::post('/rendezvous', [RendezvousController::class, 'store'])->name('rendezvous.store');
-    Route::put('/rendezvous/{id}', [RendezvousController::class, 'update'])->name('rendezvous.update');
-    Route::delete('/rendezvous/{id}', [RendezvousController::class, 'destroy'])->name('rendezvous.destroy');
-    Route::get('/rendezvous/patient/{patientId}', [RendezvousController::class, 'getByPatient'])->name('rendezvous.by-patient');
-    Route::get('/rendezvous/medecin/{medecinId}', [RendezvousController::class, 'getByMedecin'])->name('rendezvous.by-medecin');
 
     // Routes de gestion des médecins
     Route::get('/medecins', [MedecinController::class, 'index'])->name('medecins.index');

@@ -7,141 +7,231 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-100">
     <!-- Header -->
     <header class="bg-white shadow-sm border-b">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center py-4">
-                <div class="flex items-center">
-                    <i class="fas fa-user-md text-green-600 text-2xl mr-3"></i>
-                    <h1 class="text-2xl font-bold text-gray-900">Dashboard Médecin</h1>
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-user-md text-green-500 text-2xl"></i>
+                    <h1 class="text-xl font-bold">Dashboard Médecin</h1>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <span class="text-gray-700">Dr. {{ Auth::user()->prenom }} {{ Auth::user()->nom }}</span>
-                    <form method="POST" action="/logout" class="inline">
-                        @csrf
-                        <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
-                            <i class="fas fa-sign-out-alt mr-2"></i>Déconnexion
-                        </button>
-                    </form>
+                    <span id="userName">Chargement...</span>
+                    <button onclick="logout()" class="bg-red-500 text-white px-4 py-2 rounded">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Déconnexion
+                    </button>
                 </div>
             </div>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div class="px-4 py-6 sm:px-0">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Rendez-vous Aujourd'hui -->
-                <div class="bg-white overflow-hidden shadow rounded-lg">
-                    <div class="p-5">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <i class="fas fa-calendar-day text-blue-600 text-3xl"></i>
-                            </div>
-                            <div class="ml-5 w-0 flex-1">
-                                <dl>
-                                    <dt class="text-sm font-medium text-gray-500 truncate">RDV Aujourd'hui</dt>
-                                    <dd class="text-lg font-medium text-gray-900">0</dd>
-                                </dl>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <main class="max-w-7xl mx-auto py-6 px-4">
+        <!-- Actions Rapides -->
+        <div class="mb-8">
+            <h2 class="text-lg font-bold mb-4">Actions Rapides</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <button onclick="loadRendezVous()" class="bg-blue-500 text-white p-4 rounded text-center">
+                    <i class="fas fa-calendar-check text-2xl mb-2"></i>
+                    <div class="font-semibold">Mes Rendez-vous</div>
+                </button>
+                
+                <button onclick="loadConsultations()" class="bg-green-500 text-white p-4 rounded text-center">
+                    <i class="fas fa-stethoscope text-2xl mb-2"></i>
+                    <div class="font-semibold">Mes Consultations</div>
+                </button>
+                
+                <button onclick="loadPatients()" class="bg-purple-500 text-white p-4 rounded text-center">
+                    <i class="fas fa-users text-2xl mb-2"></i>
+                    <div class="font-semibold">Mes Patients</div>
+                </button>
+                
+                <button onclick="loadPrescriptions()" class="bg-orange-500 text-white p-4 rounded text-center">
+                    <i class="fas fa-pills text-2xl mb-2"></i>
+                    <div class="font-semibold">Mes Prescriptions</div>
+                </button>
+            </div>
+        </div>
 
-                <!-- Patients en Attente -->
-                <div class="bg-white overflow-hidden shadow rounded-lg">
-                    <div class="p-5">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <i class="fas fa-users text-orange-600 text-3xl"></i>
-                            </div>
-                            <div class="ml-5 w-0 flex-1">
-                                <dl>
-                                    <dt class="text-sm font-medium text-gray-500 truncate">Patients en Attente</dt>
-                                    <dd class="text-lg font-medium text-gray-900">0</dd>
-                                </dl>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Consultations du Jour -->
-                <div class="bg-white overflow-hidden shadow rounded-lg">
-                    <div class="p-5">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <i class="fas fa-stethoscope text-green-600 text-3xl"></i>
-                            </div>
-                            <div class="ml-5 w-0 flex-1">
-                                <dl>
-                                    <dt class="text-sm font-medium text-gray-500 truncate">Consultations</dt>
-                                    <dd class="text-lg font-medium text-gray-900">0</dd>
-                                </dl>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Ordonnances à Rédiger -->
-                <div class="bg-white overflow-hidden shadow rounded-lg">
-                    <div class="p-5">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <i class="fas fa-prescription text-purple-600 text-3xl"></i>
-                            </div>
-                            <div class="ml-5 w-0 flex-1">
-                                <dl>
-                                    <dt class="text-sm font-medium text-gray-500 truncate">Ordonnances</dt>
-                                    <dd class="text-lg font-medium text-gray-900">0</dd>
-                                </dl>
-                            </div>
-                        </div>
-                    </div>
+        <!-- Contenu -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Rendez-vous -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-bold mb-4">Mes Rendez-vous</h3>
+                <div id="rendezvous-list">
+                    <p class="text-gray-500">Chargement...</p>
                 </div>
             </div>
 
-            <!-- Actions Rapides -->
-            <div class="mt-8">
-                <h2 class="text-lg font-medium text-gray-900 mb-4">Actions Rapides</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <button class="bg-blue-500 text-white p-4 rounded-lg hover:bg-blue-600 transition duration-200">
-                        <i class="fas fa-calendar-plus text-2xl mb-2"></i>
-                        <div>Mon Planning</div>
-                    </button>
-                    
-                    <button class="bg-green-500 text-white p-4 rounded-lg hover:bg-green-600 transition duration-200">
-                        <i class="fas fa-user-injured text-2xl mb-2"></i>
-                        <div>Mes Patients</div>
-                    </button>
-                    
-                    <button class="bg-purple-500 text-white p-4 rounded-lg hover:bg-purple-600 transition duration-200">
-                        <i class="fas fa-file-medical text-2xl mb-2"></i>
-                        <div>Rédiger Ordonnance</div>
-                    </button>
-                    
-                    <button class="bg-orange-500 text-white p-4 rounded-lg hover:bg-orange-600 transition duration-200">
-                        <i class="fas fa-chart-line text-2xl mb-2"></i>
-                        <div>Mes Rapports</div>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Prochains Rendez-vous -->
-            <div class="mt-8">
-                <h2 class="text-lg font-medium text-gray-900 mb-4">Prochains Rendez-vous</h2>
-                <div class="bg-white shadow overflow-hidden sm:rounded-md">
-                    <ul class="divide-y divide-gray-200">
-                        <li class="px-6 py-4">
-                            <div class="text-center text-gray-500">
-                                Aucun rendez-vous programmé
-                            </div>
-                        </li>
-                    </ul>
+            <!-- Consultations -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-bold mb-4">Mes Consultations</h3>
+                <div id="consultations-list">
+                    <p class="text-gray-500">Chargement...</p>
                 </div>
             </div>
         </div>
     </main>
+
+    <script>
+        var currentMedecin = null;
+
+        // Charger les données du médecin
+        function loadMedecinData() {
+            var userData = localStorage.getItem('user_data');
+            if (userData) {
+                currentMedecin = JSON.parse(userData);
+                document.getElementById('userName').textContent = 'Dr. ' + currentMedecin.nom + ' ' + currentMedecin.prenom;
+                loadRendezVous();
+            } else {
+                alert('Aucun utilisateur connecté');
+            }
+        }
+
+        // Charger les rendez-vous du médecin
+        function loadRendezVous() {
+            if (!currentMedecin) return;
+
+            fetch('http://127.0.0.1:8000/api/rendezvous/medecin/' + currentMedecin.id)
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(data) {
+                    var container = document.getElementById('rendezvous-list');
+                    if (data.success && data.data.length > 0) {
+                        var html = '';
+                        data.data.forEach(function(rdv) {
+                            var date = new Date(rdv.date_rdv).toLocaleDateString('fr-FR');
+                            html += '<div class="border-b py-2">';
+                            html += '<div class="font-semibold">' + date + '</div>';
+                            if (rdv.patient) {
+                                html += '<div class="text-sm text-gray-600">Patient: ' + rdv.patient.nom + ' ' + rdv.patient.prenom + '</div>';
+                            }
+                            html += '</div>';
+                        });
+                        container.innerHTML = html;
+                    } else {
+                        container.innerHTML = '<p class="text-gray-500">Aucun rendez-vous</p>';
+                    }
+                })
+                .catch(function(error) {
+                    console.error('Erreur:', error);
+                    document.getElementById('rendezvous-list').innerHTML = '<p class="text-red-500">Erreur de chargement</p>';
+                });
+        }
+
+        // Charger les consultations du médecin
+        function loadConsultations() {
+            if (!currentMedecin) return;
+
+            fetch('http://127.0.0.1:8000/api/consultations/medecin/' + currentMedecin.id)
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(data) {
+                    var container = document.getElementById('consultations-list');
+                    if (data.success && data.data.length > 0) {
+                        var html = '';
+                        data.data.forEach(function(consultation) {
+                            var date = new Date(consultation.date_consultation).toLocaleDateString('fr-FR');
+                            html += '<div class="border-b py-2">';
+                            html += '<div class="font-semibold">' + date + '</div>';
+                            html += '<div class="text-sm text-gray-600">' + (consultation.statut || 'Consultation') + '</div>';
+                            if (consultation.patient) {
+                                html += '<div class="text-sm text-gray-600">Patient: ' + consultation.patient.nom + ' ' + consultation.patient.prenom + '</div>';
+                            }
+                            html += '</div>';
+                        });
+                        container.innerHTML = html;
+                    } else {
+                        container.innerHTML = '<p class="text-gray-500">Aucune consultation</p>';
+                    }
+                })
+                .catch(function(error) {
+                    console.error('Erreur:', error);
+                    document.getElementById('consultations-list').innerHTML = '<p class="text-red-500">Erreur de chargement</p>';
+                });
+        }
+
+        // Charger les patients du médecin
+        function loadPatients() {
+            if (!currentMedecin) return;
+
+            fetch('http://127.0.0.1:8000/api/patients')
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(data) {
+                    if (data.success && data.data.length > 0) {
+                        var html = '';
+                        data.data.forEach(function(patient) {
+                            html += '<div class="border-b py-2">';
+                            html += '<div class="font-semibold">' + patient.nom + ' ' + patient.prenom + '</div>';
+                            html += '<div class="text-sm text-gray-600">ID: ' + patient.id + '</div>';
+                            html += '</div>';
+                        });
+                        alert('Patients:\n' + html.replace(/<[^>]*>/g, '\n'));
+                    } else {
+                        alert('Aucun patient trouvé');
+                    }
+                })
+                .catch(function(error) {
+                    console.error('Erreur:', error);
+                    alert('Erreur de chargement des patients');
+                });
+        }
+
+        // Charger les prescriptions du médecin
+        function loadPrescriptions() {
+            if (!currentMedecin) return;
+
+            fetch('http://127.0.0.1:8000/api/prescriptions')
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(data) {
+                    if (data.success && data.data.length > 0) {
+                        var prescriptions = data.data.filter(function(prescription) {
+                            return prescription.medecin_id === currentMedecin.id;
+                        });
+                        
+                        if (prescriptions.length > 0) {
+                            var html = '';
+                            prescriptions.forEach(function(prescription) {
+                                var date = new Date(prescription.date_prescription).toLocaleDateString('fr-FR');
+                                html += '<div class="border-b py-2">';
+                                html += '<div class="font-semibold">' + date + '</div>';
+                                html += '<div class="text-sm text-gray-600">' + (prescription.medicaments || 'Prescription') + '</div>';
+                                if (prescription.patient) {
+                                    html += '<div class="text-sm text-gray-600">Patient: ' + prescription.patient.nom + ' ' + prescription.patient.prenom + '</div>';
+                                }
+                                html += '</div>';
+                            });
+                            alert('Prescriptions:\n' + html.replace(/<[^>]*>/g, '\n'));
+                        } else {
+                            alert('Aucune prescription trouvée');
+                        }
+                    } else {
+                        alert('Aucune prescription trouvée');
+                    }
+                })
+                .catch(function(error) {
+                    console.error('Erreur:', error);
+                    alert('Erreur de chargement des prescriptions');
+                });
+        }
+
+        function logout() {
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('user_data');
+            window.location.href = '/login';
+        }
+
+        // Initialiser
+        document.addEventListener('DOMContentLoaded', function() {
+            loadMedecinData();
+        });
+    </script>
 </body>
 </html> 

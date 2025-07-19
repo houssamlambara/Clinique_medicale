@@ -16,17 +16,11 @@ class facture extends Model implements IPayable
         'date_paiement'
     ];
 
-    /**
-     * Relation vers Consultation
-     */
     public function consultation(): BelongsTo
     {
         return $this->belongsTo(Consultations::class);
     }
 
-    /**
-     * Implémentation de IPayable
-     */
     public function getMontant(): float
     {
         return (float) $this->montant;
@@ -55,9 +49,6 @@ class facture extends Model implements IPayable
         return $this->date_paiement?->toDateString();
     }
 
-    /**
-     * Scopes
-     */
     public function scopeNonPayer($query)
     {
         return $query->where('est_paye', false);
@@ -72,5 +63,4 @@ class facture extends Model implements IPayable
     {
         return $query->whereDate('date_facture', $date);
     }
-
 }

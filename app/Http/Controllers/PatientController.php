@@ -58,16 +58,23 @@ class PatientController extends Controller
         try {
             $patient = $this->patientRepository->create($request->all());
             
-            // Créer automatiquement un dossier médical vide
             $this->dossierRepository->create([
                 'patient_id' => $patient->id,
                 'note' => '',
             ]);
 
-            return $this->successResponse($patient, 'Patient créé avec succès', 201);
+            return response()->json([
+                'success' => true,
+                'message' => 'Patient créé avec succès',
+                'data' => $patient
+            ], 201);
 
         } catch (\Exception $e) {
-            return $this->serverErrorResponse('Erreur lors de la création du patient', $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la création du patient',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -83,7 +90,6 @@ class PatientController extends Controller
         ]);
 
         try {
-            // Trouver le patient avec son user
             $patient = Patient::with('user')->find($id);
             
             if (!$patient) {

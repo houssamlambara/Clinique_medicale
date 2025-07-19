@@ -60,5 +60,4 @@ class Depense extends Model implements IPayable
     {
         return $query->whereDate('date_depense', $date);
     }
-
 }
