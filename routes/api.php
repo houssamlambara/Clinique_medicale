@@ -29,15 +29,6 @@ use App\Http\Controllers\DepenseController;
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
 
-// Routes de rendez-vous (temporairement publiques pour test)
-Route::get('/rendezvous', [RendezvousController::class, 'index'])->name('rendezvous.index');
-Route::get('/rendezvous/{id}', [RendezvousController::class, 'show'])->name('rendezvous.show');
-Route::post('/rendezvous', [RendezvousController::class, 'store'])->name('rendezvous.store');
-Route::put('/rendezvous/{id}', [RendezvousController::class, 'update'])->name('rendezvous.update');
-Route::delete('/rendezvous/{id}', [RendezvousController::class, 'destroy'])->name('rendezvous.destroy');
-Route::get('/rendezvous/patient/{patientId}', [RendezvousController::class, 'getByPatient'])->name('rendezvous.by-patient');
-Route::get('/rendezvous/medecin/{medecinId}', [RendezvousController::class, 'getByMedecin'])->name('rendezvous.by-medecin');
-
 // Routes protégées par authentification
 Route::middleware('auth:sanctum')->group(function () {
     // Informations de l'utilisateur connecté
@@ -47,6 +38,23 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Déconnexion
     Route::post('/auth/logout', [AuthController::class, 'logout']);
+
+    // Routes de rendez-vous
+    Route::get('/rendezvous', [RendezvousController::class, 'index'])->name('rendezvous.index');
+    Route::get('/rendezvous/{id}', [RendezvousController::class, 'show'])->name('rendezvous.show');
+    Route::post('/rendezvous', [RendezvousController::class, 'store'])->name('rendezvous.store');
+    Route::put('/rendezvous/{id}', [RendezvousController::class, 'update'])->name('rendezvous.update');
+    Route::delete('/rendezvous/{id}', [RendezvousController::class, 'destroy'])->name('rendezvous.destroy');
+    Route::get('/rendezvous/patient/{patientId}', [RendezvousController::class, 'getByPatient'])->name('rendezvous.by-patient');
+    Route::get('/rendezvous/medecin/{medecinId}', [RendezvousController::class, 'getByMedecin'])->name('rendezvous.by-medecin');
+
+    // Routes de gestion des médecins
+    Route::get('/medecins', [MedecinController::class, 'index'])->name('medecins.index');
+    Route::get('/medecins/{id}', [MedecinController::class, 'show'])->name('medecins.show');
+    Route::post('/medecins', [MedecinController::class, 'store'])->name('medecins.store');
+    Route::put('/medecins/{id}', [MedecinController::class, 'update'])->name('medecins.update');
+    Route::delete('/medecins/{id}', [MedecinController::class, 'destroy'])->name('medecins.destroy');
+    Route::get('/medecins/specialite/{specialite}', [MedecinController::class, 'getBySpecialite'])->name('medecins.by-specialite');
 
     // Routes de gestion des patients 
     Route::get('/patients', [PatientController::class, 'index'])->name('patients.index');
@@ -71,13 +79,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/prescriptions/{id}', [PrescriptionController::class, 'destroy'])->name('prescriptions.destroy');
     Route::get('/prescriptions/patient/{patientId}', [PrescriptionController::class, 'getByPatient'])->name('prescriptions.by-patient');
 
-    // Routes de gestion des médecins
-    Route::get('/medecins', [MedecinController::class, 'index'])->name('medecins.index');
-    Route::get('/medecins/{id}', [MedecinController::class, 'show'])->name('medecins.show');
-    Route::post('/medecins', [MedecinController::class, 'store'])->name('medecins.store');
-    Route::put('/medecins/{id}', [MedecinController::class, 'update'])->name('medecins.update');
-    Route::delete('/medecins/{id}', [MedecinController::class, 'destroy'])->name('medecins.destroy');
-    Route::get('/medecins/specialite/{specialite}', [MedecinController::class, 'getBySpecialite'])->name('medecins.by-specialite');
+
 
     // Routes de gestion des infirmiers
     Route::get('/infirmiers', [InfirmiersController::class, 'index'])->name('infirmiers.index');
@@ -126,5 +128,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/depenses/{id}', [DepenseController::class, 'update'])->name('depenses.update');
     Route::delete('/depenses/{id}', [DepenseController::class, 'destroy'])->name('depenses.destroy');
     Route::post('/depenses/{id}/payer', [DepenseController::class, 'marquerCommePayer'])->name('depenses.marquer-payee');
-
 });

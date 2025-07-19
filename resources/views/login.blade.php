@@ -133,10 +133,6 @@
                     console.log('Token stocké:', data.data.token);
                     console.log('Données utilisateur stockées:', data.data.user);
                     
-                    // Afficher le message de succès
-                    document.getElementById('successText').textContent = 'Connexion réussie ! Redirection...';
-                    successMessage.classList.remove('hidden');
-                    
                     // Rediriger selon le rôle
                     setTimeout(function() {
                         const user = data.data.user;

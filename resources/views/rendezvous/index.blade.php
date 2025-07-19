@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Liste des Rendez-vous</title>
+    <title>Gestion des Rendez-vous</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="{{ asset('js/rendezvous.js') }}"></script>
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
     <!-- Header -->
@@ -38,16 +39,10 @@
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-xl font-bold text-gray-900">Mes Rendez-vous</h2>
                 <div class="flex items-center space-x-2">
-                    <button onclick="loadRendezVous()" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 transform hover:scale-105 shadow-md text-sm">
-                        <i class="fas fa-sync-alt mr-2"></i>Actualiser
+                    <button onclick="openAppointmentModal()" class="bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 transform hover:scale-105 shadow-md text-sm">
+                        <i class="fas fa-plus mr-2"></i>Nouveau Rendez-vous
                     </button>
                 </div>
-            </div>
-
-            <!-- Loading -->
-            <div id="loading" class="text-center py-12">
-                <i class="fas fa-spinner fa-spin text-blue-500 text-4xl mb-4"></i>
-                <p class="text-gray-600">Chargement des rendez-vous...</p>
             </div>
 
             <!-- Liste -->
@@ -70,126 +65,144 @@
         </div>
     </main>
 
-    <!-- Script -->
-    <script>
-        // Charger les rendez-vous
-        function loadRendezVous() {
-            // Afficher le loading
-            document.getElementById('loading').classList.remove('hidden');
-            document.getElementById('rendezvous-list').innerHTML = '';
-            document.getElementById('no-rendezvous').classList.add('hidden');
-            document.getElementById('error-message').classList.add('hidden');
-            const userData = localStorage.getItem('user_data');
-            const user = JSON.parse(userData);
-            const patientId = user.patient.id;
-            console.log(patientId);
+    <!-- Modal pour prendre un rendez-vous -->
+    <div id="appointmentModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                <!-- Header du modal -->
+                <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">Prendre un Rendez-vous</h2>
+                        <p class="text-gray-600 mt-1">Sélectionnez une date et un créneau horaire</p>
+                    </div>
+                    <button onclick="closeAppointmentModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
 
-            // Appel API direct (routes publiques)
-            fetch(`http://127.0.0.1:8000/api/rendezvous/patient/${patientId}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Erreur de connexion au serveur');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    document.getElementById('loading').classList.add('hidden');
-                    
-                    if (data.success && data.data.length > 0) {
-                        console.log(data.data);
-                        displayRendezVous(data.data);
-                    } else {
-                        document.getElementById('no-rendezvous').classList.remove('hidden');
-                    }
-                })
-                .catch(error => {
-                    console.error('Erreur:', error);
-                    document.getElementById('loading').classList.add('hidden');
-                    showError(error.message);
-                });
-        }
-
-        // Afficher les rendez-vous
-        function displayRendezVous(rendezvous) {
-            var container = document.getElementById('rendezvous-list');
-            container.innerHTML = '';
-
-            rendezvous.forEach(function(rdv) {
-                var div = createRendezVousElement(rdv);
-                container.appendChild(div);
-            });
-        }
-
-        // Créer un élément de rendez-vous
-        function createRendezVousElement(rdv) {
-            var div = document.createElement('div');
-            div.className = 'bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 p-6';
-            
-            var date = new Date(rdv.date_rdv).toLocaleDateString('fr-FR');
-            var time = new Date(rdv.date_rdv).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-            var isToday = new Date(rdv.date_rdv).toDateString() === new Date().toDateString();
-            var isPast = new Date(rdv.date_rdv) < new Date();
-            
-            var statusClass = isPast ? 'bg-red-100 text-red-800' : 
-                            isToday ? 'bg-green-100 text-green-800' : 
-                            'bg-blue-100 text-blue-800';
-            
-            var statusText = isPast ? 'Passé' : 
-                           isToday ? 'Aujourd\'hui' : 
-                           'À venir';
-
-            div.innerHTML = `
-                <div class="flex justify-between items-start">
-                    <div class="flex-1">
-                        <div class="flex items-center mb-3">
-                            <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-2 rounded-lg mr-3">
-                                <i class="fas fa-calendar-check text-white text-sm"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-gray-900">Rendez-vous #${rdv.id}</h4>
-                                <p class="text-sm text-gray-600">${date}</p>
-                            </div>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            ${rdv.patient ? `
-                                <div class="bg-gray-50 p-3 rounded-lg">
-                                    <p class="text-xs font-medium text-gray-600">Patient</p>
-                                    <p class="text-sm font-semibold text-gray-900">${rdv.patient.user.nom} ${rdv.patient.user.prenom}</p>
-                                </div>
-                            ` : ''}
+                <!-- Contenu du modal -->
+                <div class="p-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Calendrier -->
+                        <div class="bg-gray-50 rounded-xl p-6">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-calendar mr-2"></i>Sélectionner une date
+                            </h3>
                             
-                            ${rdv.medecin ? `
-                                <div class="bg-gray-50 p-3 rounded-lg">
-                                    <p class="text-xs font-medium text-gray-600">Médecin</p>
-                                    <p class="text-sm font-semibold text-gray-900">Dr. ${rdv.medecin.user.nom} ${rdv.medecin.user.prenom}</p>
-                                </div>
-                            ` : ''}
-                        </div>
-                        
-                        ${rdv.raison ? `
-                            <div class="text-sm text-gray-600">
-                                <i class="fas fa-info-circle mr-2"></i>
-                                <span>${rdv.raison}</span>
+                            <!-- Navigation du mois -->
+                            <div class="flex items-center justify-between mb-4">
+                                <button id="prevMonth" class="p-2 hover:bg-gray-200 rounded-lg transition duration-200">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <h4 id="currentMonth" class="text-lg font-semibold text-gray-800"></h4>
+                                <button id="nextMonth" class="p-2 hover:bg-gray-200 rounded-lg transition duration-200">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
                             </div>
-                        ` : ''}
+
+                            <!-- Jours de la semaine -->
+                            <div class="grid grid-cols-7 gap-1 mb-2">
+                                <div class="text-center text-sm font-medium text-gray-500 py-2">Dim</div>
+                                <div class="text-center text-sm font-medium text-gray-500 py-2">Lun</div>
+                                <div class="text-center text-sm font-medium text-gray-500 py-2">Mar</div>
+                                <div class="text-center text-sm font-medium text-gray-500 py-2">Mer</div>
+                                <div class="text-center text-sm font-medium text-gray-500 py-2">Jeu</div>
+                                <div class="text-center text-sm font-medium text-gray-500 py-2">Ven</div>
+                                <div class="text-center text-sm font-medium text-gray-500 py-2">Sam</div>
+                            </div>
+
+                            <!-- Grille du calendrier -->
+                            <div id="calendarGrid" class="grid grid-cols-7 gap-1">
+                                <!-- Les jours seront générés par JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- Créneaux horaires -->
+                        <div class="bg-gray-50 rounded-xl p-6">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-clock mr-2"></i>Sélectionner un créneau
+                            </h3>
+                            
+                            <div id="selectedDate" class="text-sm text-gray-600 mb-4">
+                                Veuillez sélectionner une date
+                            </div>
+
+                            <!-- Sélection du médecin -->
+                            <div class="mb-6">
+                                <h4 class="text-md font-medium text-gray-700 mb-3">
+                                    <i class="fas fa-user-md mr-2"></i>Choisir un médecin
+                                </h4>
+                                <select id="doctorSelect" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    <option value="">Sélectionnez un médecin</option>
+                                    <!-- Les médecins seront chargés par JavaScript -->
+                                </select>
+                            </div>
+
+                            <!-- Créneaux du matin -->
+                            <div class="mb-6">
+                                <h4 class="text-md font-medium text-gray-700 mb-3">Matin</h4>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <div class="time-slot p-3 text-center border border-gray-300 rounded-lg hover:bg-blue-50 cursor-pointer" data-time="09:00">09:00</div>
+                                    <div class="time-slot p-3 text-center border border-gray-300 rounded-lg hover:bg-blue-50 cursor-pointer" data-time="09:30">09:30</div>
+                                    <div class="time-slot p-3 text-center border border-gray-300 rounded-lg hover:bg-blue-50 cursor-pointer" data-time="10:00">10:00</div>
+                                    <div class="time-slot p-3 text-center border border-gray-300 rounded-lg hover:bg-blue-50 cursor-pointer" data-time="10:30">10:30</div>
+                                    <div class="time-slot p-3 text-center border border-gray-300 rounded-lg hover:bg-blue-50 cursor-pointer" data-time="11:00">11:00</div>
+                                    <div class="time-slot p-3 text-center border border-gray-300 rounded-lg hover:bg-blue-50 cursor-pointer" data-time="11:30">11:30</div>
+                                </div>
+                            </div>
+
+                            <!-- Créneaux de l'après-midi -->
+                            <div class="mb-6">
+                                <h4 class="text-md font-medium text-gray-700 mb-3">Après-midi</h4>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <div class="time-slot p-3 text-center border border-gray-300 rounded-lg hover:bg-blue-50 cursor-pointer" data-time="14:00">14:00</div>
+                                    <div class="time-slot p-3 text-center border border-gray-300 rounded-lg hover:bg-blue-50 cursor-pointer" data-time="14:30">14:30</div>
+                                    <div class="time-slot p-3 text-center border border-gray-300 rounded-lg hover:bg-blue-50 cursor-pointer" data-time="15:00">15:00</div>
+                                    <div class="time-slot p-3 text-center border border-gray-300 rounded-lg hover:bg-blue-50 cursor-pointer" data-time="15:30">15:30</div>
+                                    <div class="time-slot p-3 text-center border border-gray-300 rounded-lg hover:bg-blue-50 cursor-pointer" data-time="16:00">16:00</div>
+                                    <div class="time-slot p-3 text-center border border-gray-300 rounded-lg hover:bg-blue-50 cursor-pointer" data-time="16:30">16:30</div>
+                                </div>
+                            </div>
+
+                            <!-- Résumé du rendez-vous -->
+                            <div id="appointmentSummary" class="bg-white rounded-lg p-4 mb-4 hidden">
+                                <h4 class="text-md font-semibold text-gray-800 mb-3">
+                                    <i class="fas fa-calendar-check mr-2"></i>Résumé
+                                </h4>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between">
+                                        <span class="text-sm text-gray-600">Date:</span>
+                                        <span id="summaryDate" class="text-sm font-medium text-gray-800"></span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm text-gray-600">Heure:</span>
+                                        <span id="summaryTime" class="text-sm font-medium text-gray-800"></span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm text-gray-600">Médecin:</span>
+                                        <span id="summaryDoctor" class="text-sm font-medium text-gray-800"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Bouton de confirmation -->
+                            <button id="confirmButton" disabled
+                                class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-green-600 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transform hover:scale-[1.02] transition duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                                <i class="fas fa-check mr-2"></i>Confirmer le rendez-vous
+                            </button>
+                        </div>
                     </div>
                 </div>
-            `;
+            </div>
+        </div>
+    </div>
 
-            return div;
-        }
-
-        // Afficher une erreur
-        function showError(message) {
-            document.getElementById('error-text').textContent = message;
-            document.getElementById('error-message').classList.remove('hidden');
-        }
-
-        // Initialiser la page
-        document.addEventListener('DOMContentLoaded', function() {
-            loadRendezVous();
-        });
-    </script>
+    <!-- Message de succès -->
+    <div id="successMessage" class="fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg z-50 hidden">
+        <div class="flex items-center">
+            <i class="fas fa-check-circle mr-2"></i>
+            <span>Rendez-vous confirmé avec succès !</span>
+        </div>
+    </div>
 </body>
 </html> 

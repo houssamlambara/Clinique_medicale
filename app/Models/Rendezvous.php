@@ -13,6 +13,7 @@ class Rendezvous extends Model
         'patient_id',
         'medecin_id',
         'date_rdv',
+        'heure_rdv',
     ];
 
     /**
