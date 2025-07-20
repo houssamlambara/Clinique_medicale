@@ -48,6 +48,7 @@ class RendezvousController extends Controller
             'patient_id' => 'required|exists:patients,id',
             // 'medecin_id' => 'required|exists:medecins,id',
             'date_rdv' => 'required|date|after:now',
+            'heure_rdv' => 'required|date_format:H:i',
         ]);
 
         try {
@@ -74,6 +75,7 @@ class RendezvousController extends Controller
             'patient_id' => 'sometimes|exists:patients,id',
             'medecin_id' => 'sometimes|exists:medecins,id',
             'date_rdv' => 'sometimes|date',
+            'heure_rdv' => 'sometimes|date_format:H:i',
         ]);
 
         try {

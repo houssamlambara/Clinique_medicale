@@ -167,19 +167,28 @@
                             <!-- Résumé du rendez-vous -->
                             <div id="appointmentSummary" class="bg-white rounded-lg p-4 mb-4 hidden">
                                 <h4 class="text-md font-semibold text-gray-800 mb-3">
-                                    <i class="fas fa-calendar-check mr-2"></i>Résumé
+                                    <i class="fas fa-calendar-check mr-2"></i>Résumé du rendez-vous
                                 </h4>
-                                <div class="space-y-2">
-                                    <div class="flex justify-between">
-                                        <span class="text-sm text-gray-600">Date:</span>
+                                <div class="space-y-3">
+                                    <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fas fa-calendar text-blue-500"></i>
+                                            <span class="text-sm text-gray-600">Date:</span>
+                                        </div>
                                         <span id="summaryDate" class="text-sm font-medium text-gray-800"></span>
                                     </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-sm text-gray-600">Heure:</span>
+                                    <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fas fa-clock text-green-500"></i>
+                                            <span class="text-sm text-gray-600">Heure:</span>
+                                        </div>
                                         <span id="summaryTime" class="text-sm font-medium text-gray-800"></span>
                                     </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-sm text-gray-600">Médecin:</span>
+                                    <div class="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fas fa-user-md text-purple-500"></i>
+                                            <span class="text-sm text-gray-600">Médecin:</span>
+                                        </div>
                                         <span id="summaryDoctor" class="text-sm font-medium text-gray-800"></span>
                                     </div>
                                 </div>

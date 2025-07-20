@@ -66,12 +66,15 @@ function createRendezVousElement(rdv) {
                     </div>
                     <div>
                         <h4 class="font-semibold text-gray-900">Rendez-vous #${rdv.id}</h4>
-                        <div class="flex items-center gap-2">
-                            <p class="text-sm text-gray-600">${date}</p>
-                            <span class="text-xs text-gray-500">•</span>
-                            <p class="text-sm font-medium text-blue-600">
-                                <i class="fas fa-clock mr-1"></i>${heure}
-                            </p>
+                        <div class="flex items-center gap-4">
+                            <div class="flex items-center gap-1">
+                                <i class="fas fa-calendar text-blue-500 text-sm"></i>
+                                <p class="text-sm text-gray-600">${date}</p>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <i class="fas fa-clock text-green-500 text-sm"></i>
+                                <p class="text-sm text-gray-600">${heure}</p>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -40,7 +40,7 @@ function loadRendezVous() {
     console.log('Chargement des rendez-vous pour le médecin:', currentMedecin.id);
     console.log('Token disponible:', token ? 'Oui' : 'Non');
 
-    fetch(`/api/rendezvous/medecin/${currentMedecin.id}`, {
+    fetch(`http://127.0.0.1:8000/api/rendezvous/medecin/${currentMedecin.id}`, {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -89,13 +89,7 @@ function displayRendezVous(rendezvous) {
     let html = '';
     rendezvous.forEach(rdv => {
         const date = new Date(rdv.date_rdv).toLocaleDateString('fr-FR');
-        const time = new Date(rdv.date_rdv).toLocaleTimeString('fr-FR', { 
-            hour: '2-digit', 
-            minute: '2-digit' 
-        });
-        
-        const statusClass = getStatusClass(rdv.statut);
-        const statusText = getStatusText(rdv.statut);
+        const time = rdv.heure_rdv ? rdv.heure_rdv.substring(0, 5) : '--:--';
 
         html += `
             <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
@@ -106,13 +100,17 @@ function displayRendezVous(rendezvous) {
                         </div>
                         <div>
                             <h3 class="text-lg font-semibold text-gray-900">Rendez-vous #${rdv.id}</h3>
-                            <p class="text-sm text-gray-600">${date} à ${time}</p>
+                            <div class="flex items-center gap-4">
+                                <div class="flex items-center gap-1">
+                                    <i class="fas fa-calendar text-blue-500 text-sm"></i>
+                                    <p class="text-sm text-gray-600">${date}</p>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <i class="fas fa-clock text-green-500 text-sm"></i>
+                                    <p class="text-sm text-gray-600">${time}</p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <span class="px-3 py-1 rounded-full text-xs font-medium ${statusClass}">
-                            ${statusText}
-                        </span>
                     </div>
                 </div>
 
@@ -121,15 +119,14 @@ function displayRendezVous(rendezvous) {
                         <h4 class="font-medium text-gray-900 mb-2">
                             <i class="fas fa-user mr-2 text-blue-500"></i>Patient
                         </h4>
-                        <p class="text-gray-700">${rdv.patient ? rdv.patient.nom + ' ' + rdv.patient.prenom : 'Patient non spécifié'}</p>
-                        ${rdv.patient ? `<p class="text-sm text-gray-500">ID: ${rdv.patient.id}</p>` : ''}
+                        <p class="text-gray-700">${rdv.patient ? rdv.patient.user.nom + ' ' + rdv.patient.user.prenom : 'Patient non spécifié'}</p>
                     </div>
 
                     <div class="bg-gray-50 rounded-lg p-4">
                         <h4 class="font-medium text-gray-900 mb-2">
                             <i class="fas fa-user-md mr-2 text-green-500"></i>Médecin
                         </h4>
-                        <p class="text-gray-700">Dr. ${rdv.medecin ? rdv.medecin.nom + ' ' + rdv.medecin.prenom : currentMedecin.nom + ' ' + currentMedecin.prenom}</p>
+                        <p class="text-gray-700">Dr. ${rdv.medecin ? rdv.medecin.user.nom + ' ' + rdv.medecin.user.prenom : currentMedecin.nom + ' ' + currentMedecin.prenom}</p>
                     </div>
                 </div>
 
@@ -141,103 +138,12 @@ function displayRendezVous(rendezvous) {
                         <p class="text-gray-700">${rdv.motif}</p>
                     </div>
                 ` : ''}
-
-                <div class="flex items-center justify-between pt-4 border-t border-gray-200">
-                    <div class="text-sm text-gray-500">
-                        <i class="fas fa-clock mr-1"></i>
-                        Créé le ${new Date(rdv.created_at).toLocaleDateString('fr-FR')}
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <button onclick="updateRendezVousStatus(${rdv.id}, 'confirmé')" 
-                                class="px-3 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600 transition-colors">
-                            <i class="fas fa-check mr-1"></i>Confirmer
-                        </button>
-                        <button onclick="updateRendezVousStatus(${rdv.id}, 'annulé')" 
-                                class="px-3 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600 transition-colors">
-                            <i class="fas fa-times mr-1"></i>Annuler
-                        </button>
-                    </div>
-                </div>
             </div>
         `;
     });
 
     container.innerHTML = html;
 }
-
-// Mettre à jour le statut d'un rendez-vous
-function updateRendezVousStatus(rendezVousId, newStatus) {
-    if (!currentMedecin) return;
-
-    const token = localStorage.getItem('auth_token');
-    if (!token) {
-        showError('Token d\'authentification manquant');
-        return;
-    }
-
-    fetch(`/api/rendezvous/${rendezVousId}`, {
-        method: 'PUT',
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify({
-            statut: newStatus
-        })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            showSuccess('Statut du rendez-vous mis à jour avec succès');
-            loadRendezVous(); // Recharger les données
-        } else {
-            showError(data.message || 'Erreur lors de la mise à jour');
-        }
-    })
-    .catch(error => {
-        console.error('Erreur:', error);
-        showError('Erreur de connexion au serveur');
-    });
-}
-
-// Obtenir la classe CSS pour le statut
-function getStatusClass(status) {
-    switch (status) {
-        case 'confirmé':
-            return 'bg-green-100 text-green-800';
-        case 'en_attente':
-            return 'bg-yellow-100 text-yellow-800';
-        case 'annulé':
-            return 'bg-red-100 text-red-800';
-        case 'terminé':
-            return 'bg-blue-100 text-blue-800';
-        default:
-            return 'bg-gray-100 text-gray-800';
-    }
-}
-
-// Obtenir le texte du statut
-function getStatusText(status) {
-    switch (status) {
-        case 'confirmé':
-            return 'Confirmé';
-        case 'en_attente':
-            return 'En attente';
-        case 'annulé':
-            return 'Annulé';
-        case 'terminé':
-            return 'Terminé';
-        default:
-            return 'Inconnu';
-    }
-}
-
 // Afficher un message de succès
 function showSuccess(message) {
     const successMessage = document.getElementById('successMessage');
