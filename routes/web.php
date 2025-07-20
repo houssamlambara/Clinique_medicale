@@ -66,6 +66,18 @@ Route::get('/medecin/patients', function (Request $request) {
     return view('medecin.patients');
 })->name('medecin.patients');
 
+// Route pour les dossiers médicaux du médecin - Accès libre
+Route::get('/medecin/dossiers', function (Request $request) {
+    Log::info('Accès libre à /medecin/dossiers');
+    return view('medecin.dossiers');
+})->name('medecin.dossiers');
+
+// Route pour les dossiers médicaux du patient - Accès libre
+Route::get('/patient/dossiers', function (Request $request) {
+    Log::info('Accès libre à /patient/dossiers');
+    return view('patient.dossiers');
+})->name('patient.dossiers');
+
 Route::get('/auth/token/{token}', function ($token) {
     return redirect('/login')->with('message', 'Veuillez vous connecter via le formulaire');
 })->name('auth.token');

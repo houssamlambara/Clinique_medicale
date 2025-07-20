@@ -57,4 +57,21 @@ class DossierMedicalRepository implements IDossierMedicalRepository
         }
         return $dossier->delete();
     }
+
+    public function getDossiersByMedecin(int $medecinId): Collection
+    {
+        return DossierMedical::with(['patient.user', 'prescriptions'])
+            ->whereHas('patient.rendezvous', function ($query) use ($medecinId) {
+                $query->where('medecin_id', $medecinId);
+            })
+            ->distinct()
+            ->get();
+    }
+
+    public function getDossiersByPatient(int $patientId): Collection
+    {
+        return DossierMedical::with(['patient.user', 'prescriptions'])
+            ->where('patient_id', $patientId)
+            ->get();
+    }
 }

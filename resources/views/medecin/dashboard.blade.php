@@ -47,6 +47,11 @@
                     <div class="font-semibold">Mes Patients</div>
                 </button>
                 
+                <button onclick="window.location.href='/medecin/dossiers'" class="bg-teal-500 text-white p-4 rounded text-center">
+                    <i class="fas fa-folder text-2xl mb-2"></i>
+                    <div class="font-semibold">Mes Dossiers</div>
+                </button>
+                
                 <button onclick="loadPrescriptions()" class="bg-orange-500 text-white p-4 rounded text-center">
                     <i class="fas fa-pills text-2xl mb-2"></i>
                     <div class="font-semibold">Mes Prescriptions</div>

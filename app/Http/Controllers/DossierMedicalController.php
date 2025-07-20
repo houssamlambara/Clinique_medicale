@@ -139,4 +139,40 @@ class DossierMedicalController extends Controller
             'data' => $dossier
         ]);
     }
+
+    public function getByMedecin(int $medecinId): JsonResponse
+    {
+        try {
+            $dossiers = $this->dossierRepository->getDossiersByMedecin($medecinId);
+
+            return response()->json([
+                'success' => true,
+                'data' => $dossiers
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération des dossiers',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getDossiersByPatient(int $patientId): JsonResponse
+    {
+        try {
+            $dossiers = $this->dossierRepository->getDossiersByPatient($patientId);
+
+            return response()->json([
+                'success' => true,
+                'data' => $dossiers
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération des dossiers',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

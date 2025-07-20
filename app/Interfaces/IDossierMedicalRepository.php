@@ -13,4 +13,6 @@ interface IDossierMedicalRepository
     public function create(array $data): DossierMedical;
     public function update(int $id, array $data): ?DossierMedical;
     public function delete(int $id): bool;
+    public function getDossiersByMedecin(int $medecinId): Collection;
+    public function getDossiersByPatient(int $patientId): Collection;
 } 

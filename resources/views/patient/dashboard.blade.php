@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
+
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
     <!-- Header -->
     <header class="bg-white shadow-lg border-b border-gray-200 sticky top-0 z-50">
@@ -36,19 +38,25 @@
         <!-- Actions Rapides -->
         <div class="mb-8">
             <h2 class="text-lg font-bold mb-4 text-gray-900">Actions Rapides</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <a href="/rendezvous" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6 rounded-xl text-center hover:from-blue-600 hover:to-blue-700 transition-all duration-200 transform hover:scale-105 shadow-lg">
                     <i class="fas fa-calendar-check text-3xl mb-3"></i>
                     <div class="font-semibold text-lg">Mes Rendez-vous</div>
                     <p class="text-sm opacity-90 mt-1">Gérer mes rendez-vous médicaux</p>
                 </a>
-                
+
                 <a href="/consultations" class="bg-gradient-to-r from-green-500 to-green-600 text-white p-6 rounded-xl text-center hover:from-green-600 hover:to-green-700 transition-all duration-200 transform hover:scale-105 shadow-lg">
                     <i class="fas fa-stethoscope text-3xl mb-3"></i>
                     <div class="font-semibold text-lg">Mes Consultations</div>
                     <p class="text-sm opacity-90 mt-1">Consulter mes résultats médicaux</p>
                 </a>
-                
+
+                <a href="/patient/dossiers" class="bg-gradient-to-r from-teal-500 to-cyan-600 text-white p-6 rounded-xl text-center hover:from-teal-600 hover:to-cyan-700 transition-all duration-200 transform hover:scale-105 shadow-lg">
+                    <i class="fas fa-folder text-3xl mb-3"></i>
+                    <div class="font-semibold text-lg">Mes Dossiers</div>
+                    <p class="text-sm opacity-90 mt-1">Consulter mes dossiers médicaux</p>
+                </a>
+
                 <button onclick="loadNotifications()" class="bg-gradient-to-r from-purple-500 to-purple-600 text-white p-6 rounded-xl text-center hover:from-purple-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-lg">
                     <i class="fas fa-bell text-3xl mb-3"></i>
                     <div class="font-semibold text-lg">Notifications</div>
@@ -83,8 +91,7 @@
             if (!currentPatient) return;
 
             // Simulation de notifications pour l'exemple
-            const notifications = [
-                {
+            const notifications = [{
                     id: 1,
                     type: 'rendez-vous',
                     message: 'Votre rendez-vous du 15 janvier a été confirmé',
@@ -128,7 +135,7 @@
             notifications.forEach(notification => {
                 const div = document.createElement('div');
                 div.className = 'flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors';
-                
+
                 div.innerHTML = `
                     <div class="flex-shrink-0 mr-4">
                         <i class="${notification.icon} ${notification.color} text-xl"></i>
@@ -141,7 +148,7 @@
                         <i class="fas fa-times"></i>
                     </button>
                 `;
-                
+
                 container.appendChild(div);
             });
         }
@@ -159,4 +166,5 @@
         });
     </script>
 </body>
-</html> 
+
+</html>
