@@ -42,7 +42,7 @@
                     <div class="font-semibold">Mes Consultations</div>
                 </button>
                 
-                <button onclick="loadPatients()" class="bg-purple-500 text-white p-4 rounded text-center">
+                <button onclick="window.location.href='/medecin/patients'" class="bg-purple-500 text-white p-4 rounded text-center">
                     <i class="fas fa-users text-2xl mb-2"></i>
                     <div class="font-semibold">Mes Patients</div>
                 </button>
@@ -135,33 +135,7 @@
                 });
         }
 
-        // Charger les patients du médecin
-        function loadPatients() {
-            if (!currentMedecin) return;
 
-            fetch('http://127.0.0.1:8000/api/patients')
-                .then(function(response) {
-                    return response.json();
-                })
-                .then(function(data) {
-                    if (data.success && data.data.length > 0) {
-                        var html = '';
-                        data.data.forEach(function(patient) {
-                            html += '<div class="border-b py-2">';
-                            html += '<div class="font-semibold">' + patient.nom + ' ' + patient.prenom + '</div>';
-                            html += '<div class="text-sm text-gray-600">ID: ' + patient.id + '</div>';
-                            html += '</div>';
-                        });
-                        alert('Patients:\n' + html.replace(/<[^>]*>/g, '\n'));
-                    } else {
-                        alert('Aucun patient trouvé');
-                    }
-                })
-                .catch(function(error) {
-                    console.error('Erreur:', error);
-                    alert('Erreur de chargement des patients');
-                });
-        }
 
         // Charger les prescriptions du médecin
         function loadPrescriptions() {
