@@ -184,35 +184,62 @@ function loadUserDataForConsultation(consultation) {
 
 function loadPatients() {
     const userData = localStorage.getItem('user_data');
-    if (!userData) return;
+    if (!userData) {
+        console.error('Aucun utilisateur connecté');
+        return;
+    }
 
     const medecinId = JSON.parse(userData).medecin.id;
+    console.log('Chargement des patients pour le médecin:', medecinId);
     
     fetch(`http://127.0.0.1:8000/api/patients/medecin/${medecinId}`, {
         headers: getAuthHeaders()
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log('Réponse API patients:', response.status, response.statusText);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        return response.json();
+    })
     .then(data => {
+        console.log('Données patients reçues:', data);
         if (data.success) {
             patients = data.data;
+            console.log('Patients chargés:', patients.length);
             populatePatientSelect();
+        } else {
+            console.error('Erreur API patients:', data.message);
+            showError(data.message || 'Erreur lors du chargement des patients');
         }
     })
     .catch(error => {
         console.error('Erreur lors du chargement des patients:', error);
+        showError('Erreur de connexion au serveur: ' + error.message);
     });
 }
 
 function populatePatientSelect() {
     const select = document.getElementById('patientSelect');
+    console.log('PopulatePatientSelect - Select element:', select);
+    
+    if (!select) {
+        console.error('Element patientSelect non trouvé');
+        return;
+    }
+    
     select.innerHTML = '<option value="">Sélectionnez un patient</option>';
+    console.log('Patients à ajouter:', patients.length);
     
     patients.forEach(patient => {
         const option = document.createElement('option');
         option.value = patient.id;
         option.textContent = `${patient.user.nom} ${patient.user.prenom}`;
         select.appendChild(option);
+        console.log('Patient ajouté:', patient.user.nom, patient.user.prenom);
     });
+    
+    console.log('Select rempli avec', patients.length, 'patients');
 }
 
 function loadPatientsForEdit(selectedPatientId) {

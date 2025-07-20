@@ -146,13 +146,8 @@ class PatientController extends Controller
     public function getByMedecin(int $medecinId): JsonResponse
     {
         try {
-            $consultations = \App\Models\Consultations::where('medecin_id', $medecinId)
-                ->with(['patient.user'])
-                ->get();
-
-            $patients = $consultations->map(function($consultation) {
-                return $consultation->patient;
-            })->unique('id')->values();
+            // Retourner tous les patients disponibles pour la création de consultation
+            $patients = Patient::with('user')->get();
 
             return response()->json([
                 'success' => true,
