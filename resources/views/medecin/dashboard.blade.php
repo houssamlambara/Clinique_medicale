@@ -37,7 +37,7 @@
                     <div class="font-semibold">Mes Rendez-vous</div>
                 </button>
                 
-                <button onclick="loadConsultations()" class="bg-green-500 text-white p-4 rounded text-center">
+                <button onclick="window.location.href='/medecin/consultations'" class="bg-green-500 text-white p-4 rounded text-center">
                     <i class="fas fa-stethoscope text-2xl mb-2"></i>
                     <div class="font-semibold">Mes Consultations</div>
                 </button>

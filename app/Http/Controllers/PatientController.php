@@ -143,23 +143,28 @@ class PatientController extends Controller
         }
     }
 
-    // // Rechercher des patients
-    // public function search(Request $request): JsonResponse
-    // {
-    //     $query = $request->get('q', '');
-        
-    //     if (empty($query)) {
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => 'Terme de recherche requis'
-    //         ], 400);
-    //     }
+    public function getByMedecin(int $medecinId): JsonResponse
+    {
+        try {
+            $consultations = \App\Models\Consultations::where('medecin_id', $medecinId)
+                ->with(['patient.user'])
+                ->get();
 
-    //     $patients = $this->patientRepository->search($query);
-        
-    //     return response()->json([
-    //         'success' => true,
-    //         'data' => $patients
-    //     ]);
-    // }
+            $patients = $consultations->map(function($consultation) {
+                return $consultation->patient;
+            })->unique('id')->values();
+
+            return response()->json([
+                'success' => true,
+                'data' => $patients
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération des patients',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 } 

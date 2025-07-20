@@ -62,6 +62,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/patients/{id}', [PatientController::class, 'update'])->name('patients.update');
     Route::delete('/patients/{id}', [PatientController::class, 'destroy'])->name('patients.destroy');
     Route::get('patients/search', [PatientController::class, 'search'])->name('patients.search');
+    Route::get('/patients/medecin/{medecinId}', [PatientController::class, 'getByMedecin'])->name('patients.by-medecin');
 
     // Routes de gestion des dossiers médicaux
     Route::post('dossiers', [DossierMedicalController::class, 'store'])->name('dossiers.store');

@@ -42,6 +42,12 @@ Route::get('/medecin/dashboard', function (Request $request) {
     return view('medecin.dashboard');
 })->name('medecin.dashboard');
 
+// Route pour les consultations du médecin - Accès libre
+Route::get('/medecin/consultations', function (Request $request) {
+    Log::info('Accès libre à /medecin/consultations');
+    return view('medecin.consultations');
+})->name('medecin.consultations');
+
 Route::get('/auth/token/{token}', function ($token) {
     return redirect('/login')->with('message', 'Veuillez vous connecter via le formulaire');
 })->name('auth.token');

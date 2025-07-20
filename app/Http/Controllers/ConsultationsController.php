@@ -44,7 +44,6 @@ class ConsultationsController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        // Vérifier que l'utilisateur connecté est un médecin
         $user = $request->user();
         if (!$user || $user->role !== 'medecin' || !$user->medecin) {
             return response()->json([
@@ -62,11 +61,8 @@ class ConsultationsController extends Controller
 
         try {
             $data = $request->all();
-            
-            // Le medecin_id sera automatiquement celui du médecin connecté
             $data['medecin_id'] = $user->medecin->id;
             
-            // Définir le statut par défaut
             if (!isset($data['statut'])) {
                 $data['statut'] = 'en_cours';
             }
@@ -90,7 +86,6 @@ class ConsultationsController extends Controller
 
     public function update(Request $request, int $id): JsonResponse
     {
-        // Vérifier que l'utilisateur connecté est un médecin
         $user = $request->user();
         if (!$user || $user->role !== 'medecin' || !$user->medecin) {
             return response()->json([
@@ -99,7 +94,6 @@ class ConsultationsController extends Controller
             ], 403);
         }
 
-        // Vérifier que la consultation appartient au médecin connecté
         $consultation = $this->consultationRepository->findById($id);
         if (!$consultation || $consultation->medecin_id !== $user->medecin->id) {
             return response()->json([
@@ -144,7 +138,6 @@ class ConsultationsController extends Controller
 
     public function destroy(int $id): JsonResponse
     {
-        // Vérifier que l'utilisateur connecté est un médecin
         $user = request()->user();
         if (!$user || $user->role !== 'medecin' || !$user->medecin) {
             return response()->json([
@@ -153,7 +146,6 @@ class ConsultationsController extends Controller
             ], 403);
         }
 
-        // Vérifier que la consultation appartient au médecin connecté
         $consultation = $this->consultationRepository->findById($id);
         if (!$consultation || $consultation->medecin_id !== $user->medecin->id) {
             return response()->json([

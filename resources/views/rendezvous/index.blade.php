@@ -116,7 +116,7 @@
                                 <!-- Les jours seront générés par JavaScript -->
                             </div>
                         </div>
-
+                        
                         <!-- Créneaux horaires -->
                         <div class="bg-gray-50 rounded-xl p-6">
                             <h3 class="text-lg font-semibold text-gray-800 mb-4">
@@ -162,8 +162,8 @@
                                     <div class="time-slot p-3 text-center border border-gray-300 rounded-lg hover:bg-blue-50 cursor-pointer" data-time="16:00">16:00</div>
                                     <div class="time-slot p-3 text-center border border-gray-300 rounded-lg hover:bg-blue-50 cursor-pointer" data-time="16:30">16:30</div>
                                 </div>
-                            </div>
-
+                        </div>
+                        
                             <!-- Résumé du rendez-vous -->
                             <div id="appointmentSummary" class="bg-white rounded-lg p-4 mb-4 hidden">
                                 <h4 class="text-md font-semibold text-gray-800 mb-3">
