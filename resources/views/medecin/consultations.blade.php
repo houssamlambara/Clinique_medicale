@@ -7,7 +7,7 @@
     <title>Mes Consultations</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="{{ asset('js/medecin-consultations.js') }}"></script>
+    <script src="{{ asset('js/medecin/medecin-consultations.js') }}"></script>
 </head>
 <body class="bg-gradient-to-br from-green-50 to-emerald-100 min-h-screen">
     <!-- Header -->

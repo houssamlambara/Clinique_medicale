@@ -27,14 +27,20 @@ Route::get('/patient/dashboard', function (Request $request) {
 // Route pour la liste des rendez-vous - Accès libre
 Route::get('/rendezvous', function (Request $request) {
     Log::info('Accès libre à /rendezvous');
-    return view('rendezvous.index');
+    return view('patient.rendezvous');
 })->name('rendezvous.index');
 
 // Route pour la liste des consultations - Accès libre
 Route::get('/consultations', function (Request $request) {
     Log::info('Accès libre à /consultations');
-    return view('consultations.index');
+    return view('patient.consultations');
 })->name('consultations.index');
+
+// Route pour les consultations du patient - Accès libre
+Route::get('/patient/consultations', function (Request $request) {
+    Log::info('Accès libre à /patient/consultations');
+    return view('patient.consultations');
+})->name('patient.consultations');
 
 // Route pour le dashboard médecin - Accès libre
 Route::get('/medecin/dashboard', function (Request $request) {
