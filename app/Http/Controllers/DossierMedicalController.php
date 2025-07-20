@@ -102,14 +102,20 @@ class DossierMedicalController extends Controller
     public function destroy(int $id): JsonResponse
     {
         try {
-            $dossier = $this->dossierRepository->delete($id);
-
+            $dossier = DossierMedical::find($id);
+            
             if (!$dossier) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Dossier médical non trouvé'
                 ], 404);
             }
+
+            // Supprimer d'abord les prescriptions liées
+            $dossier->prescriptions()->delete();
+            
+            // Puis supprimer le dossier
+            $dossier->delete();
 
             return response()->json([
                 'success' => true,
