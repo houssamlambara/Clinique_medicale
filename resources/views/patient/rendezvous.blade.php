@@ -7,7 +7,7 @@
     <title>Gestion des Rendez-vous</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="{{ asset('js/rendezvous.js') }}"></script>
+    <script src="{{ asset('js/patient/rendezvous-patient.js') }}"></script>
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
     <!-- Header -->

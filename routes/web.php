@@ -54,6 +54,12 @@ Route::get('/medecin/consultations', function (Request $request) {
     return view('medecin.consultations');
 })->name('medecin.consultations');
 
+// Route pour les rendez-vous du médecin - Accès libre
+Route::get('/medecin/rendezvous', function (Request $request) {
+    Log::info('Accès libre à /medecin/rendezvous');
+    return view('medecin.rendezvous');
+})->name('medecin.rendezvous');
+
 Route::get('/auth/token/{token}', function ($token) {
     return redirect('/login')->with('message', 'Veuillez vous connecter via le formulaire');
 })->name('auth.token');

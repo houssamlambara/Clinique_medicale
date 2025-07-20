@@ -32,7 +32,7 @@
         <div class="mb-8">
             <h2 class="text-lg font-bold mb-4">Actions Rapides</h2>
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <button onclick="loadRendezVous()" class="bg-blue-500 text-white p-4 rounded text-center">
+                <button onclick="window.location.href='/medecin/rendezvous'" class="bg-blue-500 text-white p-4 rounded text-center">
                     <i class="fas fa-calendar-check text-2xl mb-2"></i>
                     <div class="font-semibold">Mes Rendez-vous</div>
                 </button>
