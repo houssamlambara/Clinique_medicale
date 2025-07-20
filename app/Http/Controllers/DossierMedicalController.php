@@ -7,6 +7,7 @@ use App\Models\DossierMedical;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
+
 class DossierMedicalController extends Controller
 {
     private IDossierMedicalRepository $dossierRepository;
@@ -162,7 +163,7 @@ class DossierMedicalController extends Controller
     {
         try {
             $dossiers = $this->dossierRepository->getDossiersByPatient($patientId);
-
+            
             return response()->json([
                 'success' => true,
                 'data' => $dossiers

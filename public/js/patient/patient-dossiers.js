@@ -6,46 +6,34 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function loadUserData() {
-    console.log('Chargement des données utilisateur...');
     const userData = localStorage.getItem('user_data');
-    console.log('User data:', userData);
     
     if (userData) {
         currentPatient = JSON.parse(userData);
-        console.log('Patient connecté:', currentPatient);
         
         if (currentPatient.role !== 'patient') {
-            console.log('Rôle incorrect:', currentPatient.role);
             showError('Accès non autorisé');
             return;
         }
         loadDossiers();
     } else {
-        console.log('Aucun utilisateur connecté');
         showError('Aucun utilisateur connecté');
     }
 }
 
 function loadDossiers() {
-    console.log('Chargement des dossiers...');
-    
     if (!currentPatient) {
-        console.log('Aucun patient connecté');
         showError('Aucun patient connecté');
         return;
     }
 
     const token = localStorage.getItem('auth_token');
     if (!token) {
-        console.log('Token manquant');
         showError('Token d\'authentification manquant');
         return;
     }
 
-    console.log('URL de l\'API:', `http://127.0.0.1:8000/api/dossiers/patient/${currentPatient.id}`);
-    console.log('Token:', token);
-
-    fetch(`http://127.0.0.1:8000/api/dossiers/patient/${currentPatient.id}`, {
+    fetch(`http://127.0.0.1:8000/api/dossiers/patient/${currentPatient.patient.id}`, {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -54,25 +42,20 @@ function loadDossiers() {
         }
     })
     .then(response => {
-        console.log('Réponse API:', response.status, response.statusText);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         return response.json();
     })
     .then(data => {
-        console.log('Données reçues:', data);
         if (data.success) {
             dossiersCache = data.data;
-            console.log('Dossiers trouvés:', data.data.length);
             displayDossiers(data.data);
         } else {
-            console.log('Erreur API:', data.message);
             showError(data.message || 'Erreur lors du chargement des dossiers');
         }
     })
     .catch(error => {
-        console.log('Erreur fetch:', error);
         showError('Erreur de connexion au serveur: ' + error.message);
     });
 }
@@ -106,7 +89,6 @@ function displayDossiers(dossiers) {
                         </div>
                         <div>
                             <h3 class="text-lg font-semibold text-gray-900">Dossier #${dossier.id}</h3>
-                            <p class="text-sm text-gray-600">Créé le ${dateCreation}</p>
                         </div>
                     </div>
                 </div>
@@ -127,10 +109,6 @@ function displayDossiers(dossiers) {
                                 <div class="flex justify-between">
                                     <span class="text-sm text-gray-600">Date de création:</span>
                                     <span class="text-sm font-medium text-gray-900">${dateCreation}</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-sm text-gray-600">Dernière modification:</span>
-                                    <span class="text-sm font-medium text-gray-900">${dateModification}</span>
                                 </div>
                                 <div class="flex justify-between">
                                     <span class="text-sm text-gray-600">Prescriptions:</span>

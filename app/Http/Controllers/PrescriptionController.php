@@ -17,37 +17,13 @@ class PrescriptionController extends Controller
         $this->prescriptionRepository = $prescriptionRepository;
     }
 
-    public function index(): JsonResponse
-    {
-        $prescriptions = $this->prescriptionRepository->getAll();
-        return response()->json([
-            'success' => true,
-            'data' => $prescriptions
-        ]);
-    }
-
-    public function show(int $id): JsonResponse
-    {
-        $prescription = $this->prescriptionRepository->findById($id);
-        
-        if (!$prescription) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Prescription non trouvée'
-            ], 404);
-        }
-
-        return response()->json([
-            'success' => true,
-            'data' => $prescription
-        ]);
-    }
+    
 
     public function store(Request $request): JsonResponse
     {
         $request->validate([
             'dossier_medical_id' => 'required|exists:dossier_medicals,id',
-            // 'medecin_id' => 'required|exists:medecins,id',
+            'medecin_id' => 'required|exists:medecins,id',
             'medicament' => 'required|string|max:255',
         ]);
 
@@ -89,12 +65,9 @@ class PrescriptionController extends Controller
                 ], 404);
             }
 
-            $prescription = $this->prescriptionRepository->findById($id);
-
             return response()->json([
                 'success' => true,
-                'message' => 'Prescription mise à jour avec succès',
-                'data' => $prescription
+                'message' => 'Prescription mise à jour avec succès'
             ]);
 
         } catch (\Exception $e) {
@@ -132,15 +105,37 @@ class PrescriptionController extends Controller
         }
     }
 
-    /**
-     * Récupérer les prescriptions d'un patient
-     */
-    public function getByPatient(int $patientId): JsonResponse
+    public function getByMedecin(int $medecinId): JsonResponse
     {
-        $prescriptions = $this->prescriptionRepository->getByPatientId($patientId);
-        return response()->json([
-            'success' => true,
-            'data' => $prescriptions
-        ]);
+        try {
+            $prescriptions = $this->prescriptionRepository->getPrescriptionsByMedecin($medecinId);
+            return response()->json([
+                'success' => true,
+                'data' => $prescriptions
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération des prescriptions',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    public function getByDossier(int $dossierId): JsonResponse
+    {
+        try {
+            $prescriptions = $this->prescriptionRepository->getPrescriptionsByDossier($dossierId);
+            return response()->json([
+                'success' => true,
+                'data' => $prescriptions
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération des prescriptions',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

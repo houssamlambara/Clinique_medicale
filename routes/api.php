@@ -74,14 +74,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('dossiers/patient/{patientId}', [DossierMedicalController::class, 'getDossiersByPatient'])->name('dossiers.by-patient');
 
     // Routes de gestion des prescriptions
-    Route::get('/prescriptions', [PrescriptionController::class, 'index'])->name('prescriptions.index');
-    Route::get('/prescriptions/{id}', [PrescriptionController::class, 'show'])->name('prescriptions.show');
+    
     Route::post('/prescriptions', [PrescriptionController::class, 'store'])->name('prescriptions.store');
     Route::put('/prescriptions/{id}', [PrescriptionController::class, 'update'])->name('prescriptions.update');
     Route::delete('/prescriptions/{id}', [PrescriptionController::class, 'destroy'])->name('prescriptions.destroy');
-    Route::get('/prescriptions/patient/{patientId}', [PrescriptionController::class, 'getByPatient'])->name('prescriptions.by-patient');
-
-
+    Route::get('/prescriptions/medecin/{medecinId}', [PrescriptionController::class, 'getByMedecin'])->name('prescriptions.by-medecin');
+    Route::get('/prescriptions/dossier/{dossierId}', [PrescriptionController::class, 'getByDossier'])->name('prescriptions.by-dossier');
 
     // Routes de gestion des infirmiers
     Route::get('/infirmiers', [InfirmiersController::class, 'index'])->name('infirmiers.index');

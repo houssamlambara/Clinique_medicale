@@ -8,12 +8,6 @@ use Illuminate\Database\Eloquent\Collection;
 
 class PrescriptionRepository implements IPrescriptionRepository
 {
-    public function getByPatientId(int $patientId): Collection
-    {
-        return Prescription::whereHas('dossierMedical', function ($query) use ($patientId) {
-            $query->where('patient_id', $patientId);
-        })->with(['dossierMedical.patient.user'])->get();
-    }
 
     public function create(array $data): Prescription
     {
@@ -38,13 +32,17 @@ class PrescriptionRepository implements IPrescriptionRepository
         return $prescription->delete();
     }
 
-    public function findById(int $id): ?Prescription
+    public function getPrescriptionsByMedecin(int $medecinId): Collection
     {
-        return Prescription::with(['dossierMedical.patient.user', 'medecin.user'])->find($id);
+        return Prescription::with(['dossierMedical.patient.user', 'medecin.user'])
+            ->where('medecin_id', $medecinId)
+            ->get();
     }
 
-    public function getAll(): Collection
+    public function getPrescriptionsByDossier(int $dossierId): Collection
     {
-        return Prescription::with(['dossierMedical.patient.user', 'medecin.user'])->get();
+        return Prescription::with(['dossierMedical.patient.user', 'medecin.user'])
+            ->where('dossier_medical_id', $dossierId)
+            ->get();
     }
 } 
