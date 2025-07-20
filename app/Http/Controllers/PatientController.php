@@ -146,8 +146,8 @@ class PatientController extends Controller
     public function getByMedecin(int $medecinId): JsonResponse
     {
         try {
-            // Retourner tous les patients disponibles pour la création de consultation
-            $patients = Patient::with('user')->get();
+            // Retourner uniquement les patients qui ont pris rendez-vous avec ce médecin
+            $patients = $this->patientRepository->getPatientsByMedecin($medecinId);
 
             return response()->json([
                 'success' => true,

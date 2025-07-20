@@ -46,14 +46,13 @@ class PatientRepository implements IPatientRepository
         return $patient->delete();
     }
 
-    public function search(string $query): Collection
+    public function getPatientsByMedecin(int $medecinId): Collection
     {
         return Patient::with('user')
-            ->whereHas('user', function ($q) use ($query) {
-                $q->where('nom', 'like', "%{$query}%")
-                  ->orWhere('prenom', 'like', "%{$query}%")
-                  ->orWhere('email', 'like', "%{$query}%");
+            ->whereHas('rendezvous', function ($query) use ($medecinId) {
+                $query->where('medecin_id', $medecinId);
             })
+            ->distinct()
             ->get();
     }
 } 

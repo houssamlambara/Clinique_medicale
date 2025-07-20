@@ -13,5 +13,5 @@ interface IPatientRepository
     public function create(array $data): Patient;
     public function update(int $id, array $data): bool;
     public function delete(int $id): bool;
-    public function search(string $query): Collection;
+    public function getPatientsByMedecin(int $medecinId): Collection;
 } 
