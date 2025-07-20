@@ -198,16 +198,24 @@ function updateCalendar() {
 
         if (day.getMonth() === month) {
             dayElement.textContent = day.getDate();
-            
-            // Désactiver les jours passés
-            if (day < new Date().setHours(0, 0, 0, 0)) {
-                dayElement.classList.add('text-gray-400', 'cursor-not-allowed');
-                dayElement.classList.remove('hover:bg-blue-50');
+
+            const today = new Date();
+            if (day.toDateString() === today.toDateString()) {
+                dayElement.classList.add('bg-blue-100', 'text-blue-800');
+            }
+
+            if (selectedDate && day.toDateString() === selectedDate.toDateString()) {
+                dayElement.classList.add('bg-blue-500', 'text-white');
+            }
+
+            if (day < today) {
+                dayElement.classList.add('bg-gray-100', 'text-gray-400', 'cursor-not-allowed');
             } else {
-                dayElement.onclick = () => selectDate(day);
+                dayElement.addEventListener('click', () => selectDate(day));
             }
         } else {
-            dayElement.classList.add('text-gray-300');
+            dayElement.classList.add('text-gray-400');
+            dayElement.textContent = day.getDate();
         }
 
         grid.appendChild(dayElement);
@@ -216,49 +224,67 @@ function updateCalendar() {
 
 function selectDate(date) {
     selectedDate = date;
-    document.querySelectorAll('.calendar-day').forEach(day => day.classList.remove('bg-blue-500', 'text-white'));
-    event.target.classList.add('bg-blue-500', 'text-white');
+    updateCalendar();
     updateSelectedDateDisplay();
     checkCanConfirm();
 }
 
 function updateSelectedDateDisplay() {
-    const display = document.getElementById('selectedDate');
+    const element = document.getElementById('selectedDate');
     if (selectedDate) {
-        display.textContent = selectedDate.toLocaleDateString('fr-FR', { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-        });
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        element.textContent = selectedDate.toLocaleDateString('fr-FR', options);
     } else {
-        display.textContent = 'Veuillez sélectionner une date';
+        element.textContent = 'Veuillez sélectionner une date';
     }
 }
 
 function checkCanConfirm() {
-    const confirmButton = document.getElementById('confirmButton');
-    const canConfirm = selectedDate && selectedTime && selectedDoctor;
-    confirmButton.disabled = !canConfirm;
+    const button = document.getElementById('confirmButton');
+    const summary = document.getElementById('appointmentSummary');
     
-    if (canConfirm) {
+    if (selectedDate && selectedTime && selectedDoctor) {
+        button.disabled = false;
         updateSummary();
-        document.getElementById('appointmentSummary').classList.remove('hidden');
+        summary.classList.remove('hidden');
     } else {
-        document.getElementById('appointmentSummary').classList.add('hidden');
+        button.disabled = true;
+        summary.classList.add('hidden');
     }
 }
 
 function updateSummary() {
     if (selectedDate && selectedTime && selectedDoctor) {
-        const doctor = doctors.find(d => d.id == selectedDoctor);
-        document.getElementById('summaryDate').textContent = selectedDate.toLocaleDateString('fr-FR');
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('summaryDate').textContent = selectedDate.toLocaleDateString('fr-FR', options);
         document.getElementById('summaryTime').textContent = selectedTime;
-        document.getElementById('summaryDoctor').textContent = `Dr. ${doctor.user.nom} ${doctor.user.prenom}`;
+
+        const doctor = doctors.find(d => d.id == selectedDoctor);
+        if (doctor) {
+            document.getElementById('summaryDoctor').textContent = `Dr. ${doctor.user.nom} ${doctor.user.prenom}`;
+        }
     }
 }
 
 function initEventListeners() {
+    // Gestion des créneaux horaires
+    document.querySelectorAll('.time-slot').forEach(slot => {
+        slot.addEventListener('click', function () {
+            if (!this.classList.contains('disabled')) {
+                document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedTime = this.dataset.time;
+                checkCanConfirm();
+            }
+        });
+    });
+
+    // Gestion de la sélection du médecin
+    document.getElementById('doctorSelect').addEventListener('change', function () {
+        selectedDoctor = this.value;
+        checkCanConfirm();
+    });
+
     // Navigation du calendrier
     document.getElementById('prevMonth').addEventListener('click', () => {
         currentDate.setMonth(currentDate.getMonth() - 1);
@@ -272,79 +298,73 @@ function initEventListeners() {
         updateMonthDisplay();
     });
 
-    // Sélection du médecin
-    document.getElementById('doctorSelect').addEventListener('change', (e) => {
-        selectedDoctor = e.target.value;
-        checkCanConfirm();
-    });
-
-    // Sélection des créneaux horaires
-    document.querySelectorAll('.time-slot').forEach(slot => {
-        slot.addEventListener('click', () => {
-            document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected', 'bg-blue-500', 'text-white'));
-            slot.classList.add('selected', 'bg-blue-500', 'text-white');
-            selectedTime = slot.dataset.time;
-            checkCanConfirm();
-        });
-    });
-
-    // Confirmation du rendez-vous
-    document.getElementById('confirmButton').addEventListener('click', () => {
+    // Gestion de la confirmation (création/modification)
+    document.getElementById('confirmButton').addEventListener('click', function () {
         if (selectedDate && selectedTime && selectedDoctor) {
-            createRendezVous();
-        }
-    });
+            this.disabled = true;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Confirmation...';
 
-    // Formulaire de création
-    document.getElementById('appointmentForm')?.addEventListener('submit', (e) => {
-        e.preventDefault();
-        createRendezVous();
+            const userData = JSON.parse(localStorage.getItem('user_data') || '{}');
+            const patientId = userData.patient.id;
+
+            const rendezVousData = {
+                date_rdv: selectedDate.toISOString().split('T')[0], 
+                heure_rdv: selectedTime,
+                medecin_id: selectedDoctor,
+                patient_id: patientId 
+            };
+
+            // Déterminer si c'est une création ou modification
+            const editId = this.getAttribute('data-edit-id');
+            const url = editId ? `http://127.0.0.1:8000/api/rendezvous/${editId}` : 'http://127.0.0.1:8000/api/rendezvous';
+            const method = editId ? 'PUT' : 'POST';
+
+            fetch(url, {
+                method: method,
+                headers: getAuthHeaders(),
+                body: JSON.stringify(rendezVousData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const successMessage = document.getElementById('successMessage');
+                    const message = editId ? 'Rendez-vous mis à jour avec succès' : 'Rendez-vous créé avec succès';
+                    successMessage.querySelector('span').textContent = message;
+                    successMessage.classList.remove('hidden');
+                    
+                    this.disabled = false;
+                    this.innerHTML = '<i class="fas fa-check mr-2"></i>Confirmer le rendez-vous';
+                    this.removeAttribute('data-edit-id');
+
+                    setTimeout(() => {
+                        closeAppointmentModal();
+                        loadRendezVous();
+                    }, 1500);
+
+                    setTimeout(() => {
+                        successMessage.classList.add('hidden');
+                    }, 3000);
+                } else {
+                    throw new Error(data.message || 'Erreur lors de la création du rendez-vous');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-check mr-2"></i>Confirmer le rendez-vous';
+                showError('Erreur lors de la création du rendez-vous: ' + error.message);
+            });
+        }
     });
 }
 
-function createRendezVous() {
-    const userData = localStorage.getItem('user_data');
-    if (!userData) {
-        showError('Utilisateur non connecté');
-        return;
-    }
-
-    const patientId = JSON.parse(userData).patient.id;
-    const dateTime = new Date(selectedDate);
-    const [hours, minutes] = selectedTime.split(':');
-    dateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
-
-    const rendezVousData = {
-        patient_id: patientId,
-        medecin_id: selectedDoctor,
-        date_rdv: dateTime.toISOString(),
-        heure_rdv: selectedTime,
-        raison: document.getElementById('raisonInput')?.value || 'Consultation'
-    };
-
-    fetch('http://127.0.0.1:8000/api/rendezvous', {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify(rendezVousData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            showSuccess('Rendez-vous créé avec succès !');
-            closeAppointmentModal();
-            loadRendezVous();
-        } else {
-            showError(data.message || 'Erreur lors de la création du rendez-vous');
-        }
-    })
-    .catch(error => {
-        console.error('Erreur:', error);
-        showError('Erreur de connexion au serveur');
-    });
-}
+// Initialisation de l'application
+document.addEventListener('DOMContentLoaded', function () {
+    initEventListeners();
+    loadRendezVous();
+});
 
 function editRendezVous(rdvId) {
-    // Charger les données du rendez-vous
     fetch(`http://127.0.0.1:8000/api/rendezvous/${rdvId}`, {
         headers: getAuthHeaders()
     })
@@ -352,15 +372,31 @@ function editRendezVous(rdvId) {
     .then(data => {
         if (data.success) {
             const rdv = data.data;
-            // Remplir le formulaire d'édition
-            document.getElementById('editRendezVousId').value = rdvId;
-            document.getElementById('editDateInput').value = rdv.date_rdv.split('T')[0];
-            document.getElementById('editTimeInput').value = rdv.heure_rdv || '';
-            document.getElementById('editDoctorSelect').value = rdv.medecin_id || '';
-            document.getElementById('editRaisonInput').value = rdv.raison || '';
             
-            // Afficher le modal d'édition
-            document.getElementById('editAppointmentModal').classList.remove('hidden');
+            selectedDate = new Date(rdv.date_rdv);
+            selectedDoctor = rdv.medecin_id;
+            selectedTime = rdv.heure_rdv ? rdv.heure_rdv.substring(0, 5) : '';
+            
+            openAppointmentModal();
+            updateCalendar();
+            updateSelectedDateDisplay();
+            
+            document.getElementById('doctorSelect').value = selectedDoctor;
+            
+            document.querySelectorAll('.time-slot').forEach(slot => {
+                slot.classList.remove('selected');
+                if (slot.dataset.time === selectedTime) {
+                    slot.classList.add('selected');
+                }
+            });
+            
+            checkCanConfirm();
+            
+            document.getElementById('confirmButton').innerHTML = '<i class="fas fa-save mr-2"></i>Mettre à jour';
+            document.getElementById('confirmButton').setAttribute('data-edit-id', rdvId);
+            
+        } else {
+            showError('Erreur lors du chargement du rendez-vous');
         }
     })
     .catch(error => {
@@ -369,88 +405,32 @@ function editRendezVous(rdvId) {
     });
 }
 
-function updateRendezVous() {
-    const rdvId = document.getElementById('editRendezVousId').value;
-    const dateInput = document.getElementById('editDateInput').value;
-    const timeInput = document.getElementById('editTimeInput').value;
-    const doctorId = document.getElementById('editDoctorSelect').value;
-    const raison = document.getElementById('editRaisonInput').value;
-
-    if (!dateInput || !timeInput || !doctorId) {
-        showError('Veuillez remplir tous les champs obligatoires');
-        return;
-    }
-
-    const dateTime = new Date(dateInput + 'T' + timeInput);
-
-    const updateData = {
-        date_rdv: dateTime.toISOString(),
-        heure_rdv: timeInput,
-        medecin_id: doctorId,
-        raison: raison
-    };
-
-    fetch(`http://127.0.0.1:8000/api/rendezvous/${rdvId}`, {
-        method: 'PUT',
-        headers: getAuthHeaders(),
-        body: JSON.stringify(updateData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            showSuccess('Rendez-vous mis à jour avec succès !');
-            closeEditAppointmentModal();
-            loadRendezVous();
-        } else {
-            showError(data.message || 'Erreur lors de la mise à jour');
-        }
-    })
-    .catch(error => {
-        console.error('Erreur:', error);
-        showError('Erreur de connexion au serveur');
-    });
-}
-
 function deleteRendezVous(rdvId) {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce rendez-vous ?')) {
-        return;
+    if (confirm('Êtes-vous sûr de vouloir supprimer ce rendez-vous ?')) {
+        fetch(`http://127.0.0.1:8000/api/rendezvous/${rdvId}`, {
+            method: 'DELETE',
+            headers: getAuthHeaders()
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const successMessage = document.getElementById('successMessage');
+                successMessage.querySelector('span').textContent = 'Rendez-vous supprimé avec succès';
+                successMessage.classList.remove('hidden');
+                
+                loadRendezVous();
+                
+                setTimeout(() => {
+                    successMessage.classList.add('hidden');
+                }, 3000);
+                
+            } else {
+                throw new Error(data.message || 'Erreur lors de la suppression du rendez-vous');
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            showError('Erreur lors de la suppression du rendez-vous: ' + error.message);
+        });
     }
-
-    fetch(`http://127.0.0.1:8000/api/rendezvous/${rdvId}`, {
-        method: 'DELETE',
-        headers: getAuthHeaders()
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            showSuccess('Rendez-vous supprimé avec succès !');
-            loadRendezVous();
-        } else {
-            showError(data.message || 'Erreur lors de la suppression');
-        }
-    })
-    .catch(error => {
-        console.error('Erreur:', error);
-        showError('Erreur de connexion au serveur');
-    });
 }
-
-function closeEditAppointmentModal() {
-    document.getElementById('editAppointmentModal').classList.add('hidden');
-}
-
-function showSuccess(message) {
-    const successMessage = document.getElementById('successMessage');
-    successMessage.querySelector('span').textContent = message;
-    successMessage.classList.remove('hidden');
-    
-    setTimeout(() => {
-        successMessage.classList.add('hidden');
-    }, 3000);
-}
-
-// Initialisation
-document.addEventListener('DOMContentLoaded', function() {
-    loadRendezVous();
-    initEventListeners();
-}); 

@@ -197,6 +197,105 @@
         </div>
     </div>
 
+    <!-- Modal pour modifier un rendez-vous -->
+    <div id="editAppointmentModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-100">
+                <!-- Header du modal avec gradient -->
+                <div class="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-t-3xl p-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="bg-white bg-opacity-20 p-3 rounded-xl">
+                                <i class="fas fa-edit text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-bold text-white">Modifier le Rendez-vous</h2>
+                                <p class="text-blue-100 mt-1">Modifier les détails du rendez-vous</p>
+                            </div>
+                        </div>
+                        <button onclick="closeEditAppointmentModal()" class="text-white hover:text-blue-100 transition-colors p-2 rounded-full hover:bg-white hover:bg-opacity-20">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Contenu du modal -->
+                <div class="p-8">
+                    <form id="editAppointmentForm" class="space-y-6">
+                        <input type="hidden" id="editRendezVousId">
+                        
+                        <!-- Date -->
+                        <div class="group">
+                            <label class="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                                <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-2 rounded-lg mr-3">
+                                    <i class="fas fa-calendar text-white text-sm"></i>
+                                </div>
+                                Date du rendez-vous
+                            </label>
+                            <input type="date" id="editDateInput" 
+                                   class="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-gray-50 hover:bg-white" 
+                                   required>
+                        </div>
+
+                        <!-- Heure -->
+                        <div class="group">
+                            <label class="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                                <div class="bg-gradient-to-r from-green-500 to-green-600 p-2 rounded-lg mr-3">
+                                    <i class="fas fa-clock text-white text-sm"></i>
+                                </div>
+                                Heure du rendez-vous
+                            </label>
+                            <input type="time" id="editTimeInput" 
+                                   class="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 bg-gray-50 hover:bg-white" 
+                                   required>
+                        </div>
+
+                        <!-- Médecin -->
+                        <div class="group">
+                            <label class="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                                <div class="bg-gradient-to-r from-purple-500 to-purple-600 p-2 rounded-lg mr-3">
+                                    <i class="fas fa-user-md text-white text-sm"></i>
+                                </div>
+                                Médecin
+                            </label>
+                            <select id="editDoctorSelect" 
+                                    class="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-gray-50 hover:bg-white" 
+                                    required>
+                                <option value="">Sélectionnez un médecin</option>
+                                <!-- Les médecins seront chargés par JavaScript -->
+                            </select>
+                        </div>
+
+                        <!-- Raison -->
+                        <div class="group">
+                            <label class="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                                <div class="bg-gradient-to-r from-orange-500 to-orange-600 p-2 rounded-lg mr-3">
+                                    <i class="fas fa-notes-medical text-white text-sm"></i>
+                                </div>
+                                Raison du rendez-vous
+                            </label>
+                            <textarea id="editRaisonInput" rows="4" 
+                                      class="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 bg-gray-50 hover:bg-white resize-none" 
+                                      placeholder="Décrivez la raison de votre rendez-vous..."></textarea>
+                        </div>
+
+                        <!-- Boutons d'action -->
+                        <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                            <button type="button" onclick="closeEditAppointmentModal()" 
+                                    class="px-8 py-3 border-2 border-gray-300 rounded-xl text-gray-700 font-semibold hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 transform hover:scale-105">
+                                <i class="fas fa-times mr-2"></i>Annuler
+                            </button>
+                            <button type="button" onclick="updateRendezVous()" 
+                                    class="px-8 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl font-semibold hover:from-blue-600 hover:to-indigo-700 transition-all duration-200 transform hover:scale-105 shadow-lg">
+                                <i class="fas fa-save mr-2"></i>Modifier
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Message de succès -->
     <div id="successMessage" class="fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg z-50 hidden">
         <div class="flex items-center">
