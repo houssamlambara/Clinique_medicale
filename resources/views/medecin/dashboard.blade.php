@@ -61,125 +61,13 @@
     </main>
 
     <script>
-        var currentMedecin = null;
-
         // Charger les données du médecin
         function loadMedecinData() {
             var userData = localStorage.getItem('user_data');
             if (userData) {
-                currentMedecin = JSON.parse(userData);
+                var currentMedecin = JSON.parse(userData);
                 document.getElementById('userName').textContent = 'Dr. ' + currentMedecin.nom + ' ' + currentMedecin.prenom;
-                loadRendezVous();
-            } else {
-                alert('Aucun utilisateur connecté');
             }
-        }
-
-        // Charger les rendez-vous du médecin
-        function loadRendezVous() {
-            if (!currentMedecin) return;
-
-            fetch('http://127.0.0.1:8000/api/rendezvous/medecin/' + currentMedecin.id)
-                .then(function(response) {
-                    return response.json();
-                })
-                .then(function(data) {
-                    var container = document.getElementById('rendezvous-list');
-                    if (data.success && data.data.length > 0) {
-                        var html = '';
-                        data.data.forEach(function(rdv) {
-                            var date = new Date(rdv.date_rdv).toLocaleDateString('fr-FR');
-                            html += '<div class="border-b py-2">';
-                            html += '<div class="font-semibold">' + date + '</div>';
-                            if (rdv.patient) {
-                                html += '<div class="text-sm text-gray-600">Patient: ' + rdv.patient.nom + ' ' + rdv.patient.prenom + '</div>';
-                            }
-                            html += '</div>';
-                        });
-                        container.innerHTML = html;
-                    } else {
-                        container.innerHTML = '<p class="text-gray-500">Aucun rendez-vous</p>';
-                    }
-                })
-                .catch(function(error) {
-                    console.error('Erreur:', error);
-                    document.getElementById('rendezvous-list').innerHTML = '<p class="text-red-500">Erreur de chargement</p>';
-                });
-        }
-
-        // Charger les consultations du médecin
-        function loadConsultations() {
-            if (!currentMedecin) return;
-
-            fetch('http://127.0.0.1:8000/api/consultations/medecin/' + currentMedecin.id)
-                .then(function(response) {
-                    return response.json();
-                })
-                .then(function(data) {
-                    var container = document.getElementById('consultations-list');
-                    if (data.success && data.data.length > 0) {
-                        var html = '';
-                        data.data.forEach(function(consultation) {
-                            var date = new Date(consultation.date_consultation).toLocaleDateString('fr-FR');
-                            html += '<div class="border-b py-2">';
-                            html += '<div class="font-semibold">' + date + '</div>';
-                            html += '<div class="text-sm text-gray-600">' + (consultation.statut || 'Consultation') + '</div>';
-                            if (consultation.patient) {
-                                html += '<div class="text-sm text-gray-600">Patient: ' + consultation.patient.nom + ' ' + consultation.patient.prenom + '</div>';
-                            }
-                            html += '</div>';
-                        });
-                        container.innerHTML = html;
-                    } else {
-                        container.innerHTML = '<p class="text-gray-500">Aucune consultation</p>';
-                    }
-                })
-                .catch(function(error) {
-                    console.error('Erreur:', error);
-                    document.getElementById('consultations-list').innerHTML = '<p class="text-red-500">Erreur de chargement</p>';
-                });
-        }
-
-
-
-        // Charger les prescriptions du médecin
-        function loadPrescriptions() {
-            if (!currentMedecin) return;
-
-            fetch('http://127.0.0.1:8000/api/prescriptions')
-                .then(function(response) {
-                    return response.json();
-                })
-                .then(function(data) {
-                    if (data.success && data.data.length > 0) {
-                        var prescriptions = data.data.filter(function(prescription) {
-                            return prescription.medecin_id === currentMedecin.id;
-                        });
-                        
-                        if (prescriptions.length > 0) {
-                            var html = '';
-                            prescriptions.forEach(function(prescription) {
-                                var date = new Date(prescription.date_prescription).toLocaleDateString('fr-FR');
-                                html += '<div class="border-b py-2">';
-                                html += '<div class="font-semibold">' + date + '</div>';
-                                html += '<div class="text-sm text-gray-600">' + (prescription.medicaments || 'Prescription') + '</div>';
-                                if (prescription.patient) {
-                                    html += '<div class="text-sm text-gray-600">Patient: ' + prescription.patient.nom + ' ' + prescription.patient.prenom + '</div>';
-                                }
-                                html += '</div>';
-                            });
-                            alert('Prescriptions:\n' + html.replace(/<[^>]*>/g, '\n'));
-                        } else {
-                            alert('Aucune prescription trouvée');
-                        }
-                    } else {
-                        alert('Aucune prescription trouvée');
-                    }
-                })
-                .catch(function(error) {
-                    console.error('Erreur:', error);
-                    alert('Erreur de chargement des prescriptions');
-                });
         }
 
         function logout() {
@@ -194,4 +82,5 @@
         });
     </script>
 </body>
+</html> 
 </html> 

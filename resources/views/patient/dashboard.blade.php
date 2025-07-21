@@ -73,16 +73,12 @@
     </main>
 
     <script>
-        var currentPatient = null;
-
         // Charger les données du patient
         function loadPatientData() {
             var userData = localStorage.getItem('user_data');
             if (userData) {
-                currentPatient = JSON.parse(userData);
+                var currentPatient = JSON.parse(userData);
                 document.getElementById('userName').textContent = currentPatient.nom + ' ' + currentPatient.prenom;
-            } else {
-                alert('Aucun utilisateur connecté');
             }
         }
 
@@ -92,83 +88,14 @@
             window.location.href = '/login';
         }
 
-        // Charger les notifications
+        // Charger les notifications (fonction simplifiée)
         function loadNotifications() {
-            if (!currentPatient) return;
-
-            // Simulation de notifications pour l'exemple
-            const notifications = [{
-                    id: 1,
-                    type: 'rendez-vous',
-                    message: 'Votre rendez-vous du 15 janvier a été confirmé',
-                    date: new Date().toLocaleDateString('fr-FR'),
-                    icon: 'fas fa-calendar-check',
-                    color: 'text-blue-600'
-                },
-                {
-                    id: 2,
-                    type: 'consultation',
-                    message: 'Vos résultats d\'analyse sont disponibles',
-                    date: new Date().toLocaleDateString('fr-FR'),
-                    icon: 'fas fa-stethoscope',
-                    color: 'text-green-600'
-                },
-                {
-                    id: 3,
-                    type: 'prescription',
-                    message: 'Nouvelle prescription disponible',
-                    date: new Date().toLocaleDateString('fr-FR'),
-                    icon: 'fas fa-pills',
-                    color: 'text-purple-600'
-                }
-            ];
-
-            displayNotifications(notifications);
-        }
-
-        function displayNotifications(notifications) {
-            const container = document.getElementById('notifications-list');
-            const noNotifications = document.getElementById('no-notifications');
-
-            noNotifications.classList.add('hidden');
-            container.innerHTML = '';
-
-            if (notifications.length === 0) {
-                noNotifications.classList.remove('hidden');
-                return;
-            }
-
-            notifications.forEach(notification => {
-                const div = document.createElement('div');
-                div.className = 'flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors';
-
-                div.innerHTML = `
-                    <div class="flex-shrink-0 mr-4">
-                        <i class="${notification.icon} ${notification.color} text-xl"></i>
-                    </div>
-                    <div class="flex-1">
-                        <p class="text-sm font-medium text-gray-900">${notification.message}</p>
-                        <p class="text-xs text-gray-500 mt-1">${notification.date}</p>
-                    </div>
-                    <button onclick="markAsRead(${notification.id})" class="text-gray-400 hover:text-gray-600">
-                        <i class="fas fa-times"></i>
-                    </button>
-                `;
-
-                container.appendChild(div);
-            });
-        }
-
-        function markAsRead(notificationId) {
-            // Simulation de marquage comme lu
-            console.log('Notification marquée comme lue:', notificationId);
-            loadNotifications(); // Recharger les notifications
+            alert('Fonctionnalité en cours de développement');
         }
 
         // Initialiser
         document.addEventListener('DOMContentLoaded', function() {
             loadPatientData();
-            loadNotifications();
         });
     </script>
 </body>

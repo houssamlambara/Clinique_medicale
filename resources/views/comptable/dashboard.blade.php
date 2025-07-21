@@ -67,6 +67,34 @@
         </main>
     </div>
 
-    <script src="/js/comptable/comptable-dashboard.js"></script>
+    <script>
+        // Charger les données de l'utilisateur
+        document.addEventListener('DOMContentLoaded', function () {
+            loadUserData();
+        });
+
+        function loadUserData() {
+            const userData = localStorage.getItem('user_data');
+            
+            if (userData) {
+                const currentComptable = JSON.parse(userData);
+                
+                if (currentComptable.role === 'comptable') {
+                    document.getElementById('comptable-name').textContent = `${currentComptable.prenom} ${currentComptable.nom}`;
+                }
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('user_data');
+            window.location.href = '/login';
+        }
+
+        function loadNotifications() {
+            alert('Fonctionnalité en cours de développement');
+        }
+    </script>
 </body>
+
 </html> 
