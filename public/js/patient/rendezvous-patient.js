@@ -69,7 +69,7 @@ function createRendezVousElement(rdv) {
                         <div class="flex items-center gap-4">
                             <div class="flex items-center gap-1">
                                 <i class="fas fa-calendar text-blue-500 text-sm"></i>
-                                <p class="text-sm text-gray-600">${date}</p>
+                            <p class="text-sm text-gray-600">${date}</p>
                             </div>
                             <div class="flex items-center gap-1">
                                 <i class="fas fa-clock text-green-500 text-sm"></i>

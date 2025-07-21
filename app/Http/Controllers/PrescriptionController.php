@@ -143,10 +143,10 @@ class PrescriptionController extends Controller
     {
         try {
             $prescriptions = $this->prescriptionRepository->getPrescriptionsByDossier($dossierId);
-            return response()->json([
-                'success' => true,
-                'data' => $prescriptions
-            ]);
+        return response()->json([
+            'success' => true,
+            'data' => $prescriptions
+        ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,

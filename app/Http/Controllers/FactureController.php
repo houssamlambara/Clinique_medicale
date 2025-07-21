@@ -20,12 +20,12 @@ class FactureController extends Controller
     public function index(): JsonResponse
     {
         try {
-            $factures = $this->factureRepository->getAll();
+        $factures = $this->factureRepository->getAll();
             
-            return response()->json([
-                'success' => true,
-                'data' => $factures
-            ]);
+        return response()->json([
+            'success' => true,
+            'data' => $factures
+        ]);
         } catch (\Exception $e) {
             Log::error('Erreur dans FactureController::index: ' . $e->getMessage());
             return response()->json([

@@ -103,7 +103,7 @@ class DossierMedicalController extends Controller
     {
         try {
             $dossier = DossierMedical::find($id);
-            
+
             if (!$dossier) {
                 return response()->json([
                     'success' => false,

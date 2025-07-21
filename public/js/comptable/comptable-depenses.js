@@ -106,7 +106,10 @@ function createDepenseCard(depense) {
                 <p class="text-sm text-gray-600">${depense.description}</p>
             </div>
             <div class="flex items-center space-x-2">
-                <span class="px-3 py-1 rounded-full text-xs font-medium ${statusClass}">${statusText}</span>
+                <select onchange="changerStatutDepense(${depense.id}, this.value)" class="px-4 py-2 rounded-lg text-sm border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm hover:border-gray-300 ${isPayee ? 'border-green-300 bg-green-50' : 'border-red-300 bg-red-50'}">
+                    <option value="false" ${!isPayee ? 'selected' : ''} class="text-red-700">Non payée</option>
+                    <option value="true" ${isPayee ? 'selected' : ''} class="text-green-700">Payée</option>
+                </select>
                 <div class="flex space-x-2">
                     <button onclick="editDepense(${depense.id})" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition-colors">
                         <i class="fas fa-edit"></i>
@@ -206,6 +209,116 @@ function editDepense(id) {
 // Cacher le modal
 function hideModal() {
     document.getElementById('depense-modal').classList.add('hidden');
+}
+
+// Marquer une dépense comme payée
+function marquerCommePayee(id) {
+    if (!confirm('Marquer cette dépense comme payée ?')) return;
+    
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+        showError('Token d\'authentification manquant');
+        return;
+    }
+
+    fetch(`http://127.0.0.1:8000/api/depenses/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({
+            est_paye: true,
+            date_paiement: new Date().toISOString().split('T')[0]
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            loadDepenses();
+            showSuccess('Dépense marquée comme payée');
+        } else {
+            showError(data.message || 'Erreur lors de la mise à jour');
+        }
+    })
+    .catch(error => {
+        showError('Erreur de connexion au serveur');
+    });
+}
+
+// Marquer une dépense comme non payée
+function marquerCommeNonPayee(id) {
+    if (!confirm('Marquer cette dépense comme non payée ?')) return;
+    
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+        showError('Token d\'authentification manquant');
+        return;
+    }
+
+    fetch(`http://127.0.0.1:8000/api/depenses/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({
+            est_paye: false,
+            date_paiement: null
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            loadDepenses();
+            showSuccess('Dépense marquée comme non payée');
+        } else {
+            showError(data.message || 'Erreur lors de la mise à jour');
+        }
+    })
+    .catch(error => {
+        showError('Erreur de connexion au serveur');
+    });
+}
+
+// Changer le statut d'une dépense via le select
+function changerStatutDepense(id, newStatus) {
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+        showError('Token d\'authentification manquant');
+        return;
+    }
+
+    const isPayee = newStatus === 'true';
+    const formData = {
+        est_paye: isPayee,
+        date_paiement: isPayee ? new Date().toISOString().split('T')[0] : null
+    };
+
+    // Appel API pour mettre à jour le statut
+    fetch(`http://127.0.0.1:8000/api/depenses/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            loadDepenses();
+            showSuccess(isPayee ? 'Dépense marquée comme payée' : 'Dépense marquée comme non payée');
+        } else {
+            showError(data.message || 'Erreur lors de la mise à jour');
+        }
+    })
+    .catch(error => {
+        showError('Erreur de connexion au serveur');
+    });
 }
 
 // Supprimer une dépense
