@@ -10,12 +10,12 @@ class ConsultationRepository implements IConsultationRepository
 {
     public function getAll(): Collection
     {
-        return Consultations::with(['patient', 'medecin'])->get();
+        return Consultations::with(['patient.user', 'medecin.user'])->get();
     }
 
     public function findById(int $id): ?Consultations
     {
-        return Consultations::with(['patient', 'medecin'])->find($id);
+        return Consultations::with(['patient.user', 'medecin.user'])->find($id);
     }
 
     public function create(array $data): Consultations
@@ -43,21 +43,21 @@ class ConsultationRepository implements IConsultationRepository
 
     public function getByPatient(int $patientId): Collection
     {
-        return Consultations::with(['patient', 'medecin'])
+        return Consultations::with(['patient.user', 'medecin.user'])
             ->where('patient_id', $patientId)
             ->get();
     }
 
     public function getByMedecin(int $medecinId): Collection
     {
-        return Consultations::with(['patient', 'medecin'])
+        return Consultations::with(['patient.user', 'medecin.user'])
             ->where('medecin_id', $medecinId)
             ->get();
     }
 
     public function getByStatut(string $statut): Collection
     {
-        return Consultations::with(['patient', 'medecin'])
+        return Consultations::with(['patient.user', 'medecin.user'])
             ->where('statut', $statut)
             ->get();
     }

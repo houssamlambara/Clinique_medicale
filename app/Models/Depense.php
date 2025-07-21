@@ -10,6 +10,7 @@ class Depense extends Model implements IPayable
     protected $fillable = [
         'date_depense',
         'description',
+        'categorie',
         'montant',
         'est_paye',
         'date_paiement'

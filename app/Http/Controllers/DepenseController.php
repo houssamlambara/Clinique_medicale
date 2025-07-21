@@ -47,6 +47,7 @@ class DepenseController extends Controller
         $request->validate([
             'date_depense' => 'required|date',
             'description' => 'required|string|max:500',
+            'categorie' => 'required|string|in:fournitures,equipement,personnel,maintenance,autres',
             'montant' => 'required|numeric|min:0',
             'est_paye' => 'sometimes|boolean',
             'date_paiement' => 'sometimes|date'
@@ -82,6 +83,7 @@ class DepenseController extends Controller
         $request->validate([
             'date_depense' => 'sometimes|date',
             'description' => 'sometimes|string|max:500',
+            'categorie' => 'sometimes|string|in:fournitures,equipement,personnel,maintenance,autres',
             'montant' => 'sometimes|numeric|min:0',
             'est_paye' => 'sometimes|boolean',
             'date_paiement' => 'sometimes|date'

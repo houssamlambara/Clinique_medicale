@@ -90,6 +90,24 @@ Route::get('/patient/prescriptions', function (Request $request) {
     return view('patient.prescriptions');
 })->name('patient.prescriptions');
 
+// Route pour le dashboard comptable - Accès libre
+Route::get('/comptable/dashboard', function (Request $request) {
+    Log::info('Accès libre à /comptable/dashboard');
+    return view('comptable.dashboard');
+})->name('comptable.dashboard');
+
+// Route pour la gestion des factures - Accès libre
+Route::get('/comptable/factures', function (Request $request) {
+    Log::info('Accès libre à /comptable/factures');
+    return view('comptable.factures');
+})->name('comptable.factures');
+
+// Route pour la gestion des dépenses - Accès libre
+Route::get('/comptable/depenses', function (Request $request) {
+    Log::info('Accès libre à /comptable/depenses');
+    return view('comptable.depenses');
+})->name('comptable.depenses');
+
 Route::get('/auth/token/{token}', function ($token) {
     return redirect('/login')->with('message', 'Veuillez vous connecter via le formulaire');
 })->name('auth.token');
