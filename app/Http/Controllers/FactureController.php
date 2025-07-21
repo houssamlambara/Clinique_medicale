@@ -6,6 +6,7 @@ use App\Interfaces\IFactureRepository;
 use App\Models\facture;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class FactureController extends Controller
 {
@@ -18,11 +19,21 @@ class FactureController extends Controller
 
     public function index(): JsonResponse
     {
-        $factures = $this->factureRepository->getAll();
-        return response()->json([
-            'success' => true,
-            'data' => $factures
-        ]);
+        try {
+            $factures = $this->factureRepository->getAll();
+            
+            return response()->json([
+                'success' => true,
+                'data' => $factures
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Erreur dans FactureController::index: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors du chargement des factures',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function show(int $id): JsonResponse

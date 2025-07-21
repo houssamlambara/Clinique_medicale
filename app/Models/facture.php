@@ -18,7 +18,7 @@ class facture extends Model implements IPayable
 
     public function consultation(): BelongsTo
     {
-        return $this->belongsTo(Consultations::class);
+        return $this->belongsTo(Consultations::class, 'consultation_id');
     }
 
     public function getMontant(): float
