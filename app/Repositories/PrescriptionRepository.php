@@ -39,6 +39,15 @@ class PrescriptionRepository implements IPrescriptionRepository
             ->get();
     }
 
+    public function getPrescriptionsByPatient(int $patientId): Collection
+    {
+        return Prescription::with(['dossierMedical.patient.user', 'medecin.user'])
+            ->whereHas('dossierMedical', function ($query) use ($patientId) {
+                $query->where('patient_id', $patientId);
+            })
+            ->get();
+    }
+
     public function getPrescriptionsByDossier(int $dossierId): Collection
     {
         return Prescription::with(['dossierMedical.patient.user', 'medecin.user'])

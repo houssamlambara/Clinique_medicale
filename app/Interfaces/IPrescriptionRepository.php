@@ -12,5 +12,6 @@ interface IPrescriptionRepository
     public function update(int $id, array $data): bool;
     public function delete(int $id): bool;
     public function getPrescriptionsByMedecin(int $medecinId): Collection;
+    public function getPrescriptionsByPatient(int $patientId): Collection;
     public function getPrescriptionsByDossier(int $dossierId): Collection;
 } 

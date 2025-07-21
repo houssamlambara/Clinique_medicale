@@ -84,6 +84,12 @@ Route::get('/medecin/prescriptions', function (Request $request) {
     return view('medecin.prescriptions');
 })->name('medecin.prescriptions');
 
+// Route pour les prescriptions du patient - Accès libre
+Route::get('/patient/prescriptions', function (Request $request) {
+    Log::info('Accès libre à /patient/prescriptions');
+    return view('patient.prescriptions');
+})->name('patient.prescriptions');
+
 Route::get('/auth/token/{token}', function ($token) {
     return redirect('/login')->with('message', 'Veuillez vous connecter via le formulaire');
 })->name('auth.token');

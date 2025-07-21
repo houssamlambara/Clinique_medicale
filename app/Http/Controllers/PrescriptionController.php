@@ -122,6 +122,23 @@ class PrescriptionController extends Controller
         }
     }
     
+    public function getByPatient(int $patientId): JsonResponse
+    {
+        try {
+            $prescriptions = $this->prescriptionRepository->getPrescriptionsByPatient($patientId);
+            return response()->json([
+                'success' => true,
+                'data' => $prescriptions
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération des prescriptions',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function getByDossier(int $dossierId): JsonResponse
     {
         try {
