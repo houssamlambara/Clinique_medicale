@@ -26,6 +26,9 @@
                         </div>
                     </div>
                     <div class="flex items-center space-x-4">
+                        <button onclick="showCreateForm()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200">
+                            <i class="fas fa-plus mr-2"></i>Nouvelle Facture
+                        </button>
                         <a href="/comptable/dashboard" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200">
                             <i class="fas fa-arrow-left mr-2"></i>Retour
                         </a>
@@ -36,13 +39,6 @@
 
         <!-- Main Content -->
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <!-- Actions -->
-            <div class="mb-6 flex justify-between items-center">
-                <h2 class="text-xl font-semibold text-gray-900">Liste des Factures</h2>
-                <button onclick="showCreateForm()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200">
-                    <i class="fas fa-plus mr-2"></i>Nouvelle Facture
-                </button>
-            </div>
 
             <!-- Filtres -->
             <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200 mb-6">
