@@ -11,18 +11,11 @@ document.addEventListener('DOMContentLoaded', function () {
 // Charger les données de l'utilisateur connecté
 function loadUserData() {
     const userData = localStorage.getItem('user_data');
-    
-    if (!userData) {
-        return;
-    }
+    if (!userData) return;
     
     currentComptable = JSON.parse(userData);
+    if (currentComptable.role !== 'comptable') return;
     
-    if (currentComptable.role !== 'comptable') {
-        return;
-    }
-    
-    // Afficher le nom du comptable
     const comptableNameElement = document.getElementById('comptable-name');
     if (comptableNameElement) {
         comptableNameElement.textContent = `${currentComptable.prenom} ${currentComptable.nom}`;
@@ -37,14 +30,9 @@ function loadDepenses() {
         return;
     }
 
-    // Appel API pour récupérer les dépenses
     fetch('http://127.0.0.1:8000/api/depenses', {
         method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        }
+        headers: getHeaders(token)
     })
     .then(response => response.json())
     .then(data => {
@@ -65,19 +53,15 @@ function displayDepenses(depensesToDisplay) {
     const container = document.getElementById('depenses-list');
     const noDepenses = document.getElementById('no-depenses');
 
-    // Vider le conteneur
     container.innerHTML = '';
 
-    // Si aucune dépense, afficher le message
     if (depensesToDisplay.length === 0) {
         noDepenses.classList.remove('hidden');
         return;
     }
 
-    // Cacher le message "aucune dépense"
     noDepenses.classList.add('hidden');
 
-    // Créer une carte pour chaque dépense
     depensesToDisplay.forEach(depense => {
         const depenseCard = createDepenseCard(depense);
         container.appendChild(depenseCard);
@@ -89,12 +73,9 @@ function createDepenseCard(depense) {
     const div = document.createElement('div');
     div.className = 'bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow';
     
-    // Déterminer le statut de paiement
     const isPayee = depense.est_paye;
-    const statusClass = isPayee ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
-    const statusText = isPayee ? 'Payée' : 'Non payée';
+    const statusClass = isPayee ? 'border-green-300 bg-green-50' : 'border-red-300 bg-red-50';
     
-    // Formater les dates
     const dateDepense = new Date(depense.date_depense).toLocaleDateString('fr-FR');
     const datePaiement = depense.date_paiement ? new Date(depense.date_paiement).toLocaleDateString('fr-FR') : 'Non payée';
     const montant = parseFloat(depense.montant).toLocaleString();
@@ -106,7 +87,7 @@ function createDepenseCard(depense) {
                 <p class="text-sm text-gray-600">${depense.description}</p>
             </div>
             <div class="flex items-center space-x-2">
-                <select onchange="changerStatutDepense(${depense.id}, this.value)" class="px-4 py-2 rounded-lg text-sm border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm hover:border-gray-300 ${isPayee ? 'border-green-300 bg-green-50' : 'border-red-300 bg-red-50'}">
+                <select onchange="changerStatutDepense(${depense.id}, this.value)" class="px-4 py-2 rounded-lg text-sm border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm hover:border-gray-300 ${statusClass}">
                     <option value="false" ${!isPayee ? 'selected' : ''} class="text-red-700">Non payée</option>
                     <option value="true" ${isPayee ? 'selected' : ''} class="text-green-700">Payée</option>
                 </select>
@@ -145,7 +126,6 @@ function createDepenseCard(depense) {
 
 // Filtrer les dépenses selon les critères
 function filterDepenses() {
-    // Récupérer les valeurs des filtres
     const statusFilter = document.getElementById('filter-status').value;
     const categorieFilter = document.getElementById('filter-categorie').value;
     const dateStartFilter = document.getElementById('filter-date-start').value;
@@ -153,7 +133,6 @@ function filterDepenses() {
 
     let filteredDepenses = depenses;
 
-    // Filtrer par statut
     if (statusFilter) {
         filteredDepenses = filteredDepenses.filter(depense => {
             if (statusFilter === 'paye') return depense.est_paye;
@@ -162,22 +141,18 @@ function filterDepenses() {
         });
     }
 
-    // Filtrer par catégorie
     if (categorieFilter) {
         filteredDepenses = filteredDepenses.filter(depense => depense.categorie === categorieFilter);
     }
 
-    // Filtrer par date de début
     if (dateStartFilter) {
         filteredDepenses = filteredDepenses.filter(depense => depense.date_depense >= dateStartFilter);
     }
 
-    // Filtrer par date de fin
     if (dateEndFilter) {
         filteredDepenses = filteredDepenses.filter(depense => depense.date_depense <= dateEndFilter);
     }
 
-    // Afficher les résultats filtrés
     displayDepenses(filteredDepenses);
 }
 
@@ -195,7 +170,6 @@ function editDepense(id) {
     const depense = depenses.find(d => d.id === id);
     if (!depense) return;
 
-    // Remplir le formulaire avec les données de la dépense
     document.getElementById('modal-title').textContent = 'Modifier la Dépense';
     document.getElementById('depense-id').value = depense.id;
     document.getElementById('categorie').value = depense.categorie;
@@ -209,78 +183,6 @@ function editDepense(id) {
 // Cacher le modal
 function hideModal() {
     document.getElementById('depense-modal').classList.add('hidden');
-}
-
-// Marquer une dépense comme payée
-function marquerCommePayee(id) {
-    if (!confirm('Marquer cette dépense comme payée ?')) return;
-    
-    const token = localStorage.getItem('auth_token');
-    if (!token) {
-        showError('Token d\'authentification manquant');
-        return;
-    }
-
-    fetch(`http://127.0.0.1:8000/api/depenses/${id}`, {
-        method: 'PUT',
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify({
-            est_paye: true,
-            date_paiement: new Date().toISOString().split('T')[0]
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            loadDepenses();
-            showSuccess('Dépense marquée comme payée');
-        } else {
-            showError(data.message || 'Erreur lors de la mise à jour');
-        }
-    })
-    .catch(error => {
-        showError('Erreur de connexion au serveur');
-    });
-}
-
-// Marquer une dépense comme non payée
-function marquerCommeNonPayee(id) {
-    if (!confirm('Marquer cette dépense comme non payée ?')) return;
-    
-    const token = localStorage.getItem('auth_token');
-    if (!token) {
-        showError('Token d\'authentification manquant');
-        return;
-    }
-
-    fetch(`http://127.0.0.1:8000/api/depenses/${id}`, {
-        method: 'PUT',
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify({
-            est_paye: false,
-            date_paiement: null
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            loadDepenses();
-            showSuccess('Dépense marquée comme non payée');
-        } else {
-            showError(data.message || 'Erreur lors de la mise à jour');
-        }
-    })
-    .catch(error => {
-        showError('Erreur de connexion au serveur');
-    });
 }
 
 // Changer le statut d'une dépense via le select
@@ -297,14 +199,9 @@ function changerStatutDepense(id, newStatus) {
         date_paiement: isPayee ? new Date().toISOString().split('T')[0] : null
     };
 
-    // Appel API pour mettre à jour le statut
     fetch(`http://127.0.0.1:8000/api/depenses/${id}`, {
         method: 'PUT',
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
+        headers: getHeaders(token),
         body: JSON.stringify(formData)
     })
     .then(response => response.json())
@@ -331,14 +228,9 @@ function deleteDepense(id) {
         return;
     }
 
-    // Appel API pour supprimer
     fetch(`http://127.0.0.1:8000/api/depenses/${id}`, {
         method: 'DELETE',
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        }
+        headers: getHeaders(token)
     })
     .then(response => response.json())
     .then(data => {
@@ -354,11 +246,36 @@ function deleteDepense(id) {
     });
 }
 
+// Obtenir les headers pour les requêtes API
+function getHeaders(token) {
+    return {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+    };
+}
+
+// Afficher un message de succès
+function showSuccess(message) {
+    alert('Succès: ' + message);
+}
+
+// Afficher un message d'erreur
+function showError(message) {
+    alert('Erreur: ' + message);
+}
+
+// Déconnexion
+function logout() {
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('user_data');
+    window.location.href = '/login';
+}
+
 // Gestion de la soumission du formulaire
 document.getElementById('depense-form').addEventListener('submit', function(e) {
     e.preventDefault();
     
-    // Récupérer les données du formulaire
     const formData = {
         categorie: document.getElementById('categorie').value,
         montant: document.getElementById('montant').value,
@@ -375,18 +292,12 @@ document.getElementById('depense-form').addEventListener('submit', function(e) {
         return;
     }
 
-    // Déterminer l'URL et la méthode selon si c'est une création ou modification
     const url = isEdit ? `http://127.0.0.1:8000/api/depenses/${depenseId}` : 'http://127.0.0.1:8000/api/depenses';
     const method = isEdit ? 'PUT' : 'POST';
 
-    // Appel API pour créer ou modifier
     fetch(url, {
         method: method,
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
+        headers: getHeaders(token),
         body: JSON.stringify(formData)
     })
     .then(response => response.json())
@@ -402,21 +313,4 @@ document.getElementById('depense-form').addEventListener('submit', function(e) {
     .catch(error => {
         showError('Erreur de connexion au serveur');
     });
-});
-
-// Déconnexion
-function logout() {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user_data');
-    window.location.href = '/login';
-}
-
-// Afficher un message de succès
-function showSuccess(message) {
-    alert('Succès: ' + message);
-}
-
-// Afficher un message d'erreur
-function showError(message) {
-    alert('Erreur: ' + message);
-} 
+}); 
