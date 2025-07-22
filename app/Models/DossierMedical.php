@@ -19,7 +19,7 @@ class DossierMedical extends Model
         'note',
     ];
     
-    // Relations (SRP : DossierMedical gère seulement ses relations)
+    //  DossierMedical gère seulement ses relations)
     public function patient(): BelongsTo
     {
         return $this->belongsTo(Patient::class);

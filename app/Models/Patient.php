@@ -22,7 +22,7 @@ class Patient extends Model
         'date_naissance' => 'date',
     ];
 
-    // Relations (SRP : Patient gère seulement ses relations)
+    // Patient gère seulement ses relations)
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -38,7 +38,6 @@ class Patient extends Model
         return $this->hasMany(Rendezvous::class);
     }
 
-    // Méthodes utilitaires
     public function getFullNameAttribute(): string
     {
         return $this->user->prenom . ' ' . $this->user->nom;

@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
     loadUserData();
     loadFactures();
     loadPatients();
+    loadConsultations(); 
 });
 
 // Charger les données de l'utilisateur connecté
@@ -91,7 +92,10 @@ function loadPatients() {
 // Charger les consultations d'un patient (ou toutes si aucun patient spécifié)
 function loadConsultations(patientId = null) {
     const token = localStorage.getItem('auth_token');
-    if (!token) return;
+    if (!token) {
+        console.error('Token manquant pour charger les consultations');
+        return;
+    }
 
     let url = 'http://127.0.0.1:8000/api/consultations';
     if (patientId) {
@@ -106,15 +110,23 @@ function loadConsultations(patientId = null) {
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         }
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
             consultations = data.data;
             populateConsultationSelect();
+        } else {
+            showError('Erreur lors du chargement des consultations: ' + data.message);
         }
     })
     .catch(error => {
-        // Erreur silencieuse pour les consultations
+        console.error('Erreur lors du chargement des consultations:', error);
+        showError('Erreur de connexion lors du chargement des consultations');
     });
 }
 
@@ -148,6 +160,11 @@ function populatePatientSelects() {
 // Remplir la liste déroulante des consultations
 function populateConsultationSelect() {
     const consultationSelect = document.getElementById('consultation-id');
+    if (!consultationSelect) {
+        console.error('Élément consultation-id non trouvé');
+        return;
+    }
+    
     consultationSelect.innerHTML = '<option value="">Sélectionner une consultation</option>';
     
     // Ajouter chaque consultation
@@ -300,7 +317,9 @@ function showCreateForm() {
     document.getElementById('facture-form').reset();
     document.getElementById('facture-id').value = '';
     document.getElementById('facture-modal').classList.remove('hidden');
-    loadConsultations();
+    
+    // Utiliser les consultations déjà chargées
+    populateConsultationSelect();
 }
 
 // Afficher le formulaire d'édition
