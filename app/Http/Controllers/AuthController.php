@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Medecin;
 use App\Models\Patient;
 use App\Models\User;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -31,7 +33,7 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|min:3',
             'telephone' => 'required|string|max:20',
-            'role' => 'required|in:patient,medecin,infirmier,comptable',
+            'role' => 'required|in:patient,medecin,secretaire,comptable',
         ]);
 
         // Validation selon le rôle
@@ -76,6 +78,12 @@ class AuthController extends Controller
                         'specialite' => $request->specialite,
                         'numero_licence' => $request->numero_licence,
                     ]);
+                    break;
+
+                case 'secretaire':
+                case 'comptable':
+                    // Pas de table spécialisée pour les secrétaires et comptables
+                    // Ils utilisent seulement la table users
                     break;
             }
 
@@ -125,7 +133,7 @@ class AuthController extends Controller
 
         // Charger les informations complètes selon le rôle
         $userData = $this->getUserCompleteData($user);
-
+        
         return response()->json([
             'success' => true,
             'message' => 'Connexion réussie',
@@ -201,20 +209,10 @@ class AuthController extends Controller
                 }
                 break;
 
-            case 'infirmier':
-                $infirmier = $user->infirmier;
-                if ($infirmier) {
-                    $userData['infirmier'] = [
-                        'id' => $infirmier->id,
-                        'specialite' => $infirmier->specialite,
-                        'numero_licence' => $infirmier->numero_licence,
-                    ];
-                }
-                break;
-
             case 'secretaire':
             case 'comptable':
-                // Pour les secrétaires et comptables, pas d'informations supplémentaires nécessaires
+                // Pas d'informations supplémentaires pour les secrétaires et comptables
+                // Ils utilisent seulement les informations de base de la table users
                 break;
 
             default:

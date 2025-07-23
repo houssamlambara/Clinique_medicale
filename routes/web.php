@@ -96,6 +96,18 @@ Route::get('/comptable/dashboard', function (Request $request) {
     return view('comptable.dashboard');
 })->name('comptable.dashboard');
 
+// Route pour le dashboard de la secrétaire - Accès libre
+Route::get('/secretaire/dashboard', function (Request $request) {
+    Log::info('Accès libre à /secretaire/dashboard');
+    return view('secretaire.dashboard');
+})->name('secretaire.dashboard');
+
+// Route pour la gestion des rendez-vous de la secrétaire - Accès libre
+Route::get('/secretaire/rendezvous', function (Request $request) {
+    Log::info('Accès libre à /secretaire/rendezvous');
+    return view('secretaire.rendezvous');
+})->name('secretaire.rendezvous');
+
 // Route pour la gestion des factures - Accès libre
 Route::get('/comptable/factures', function (Request $request) {
     Log::info('Accès libre à /comptable/factures');

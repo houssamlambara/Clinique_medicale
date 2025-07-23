@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->string('telephone');
-            $table->enum('role', ['patient', 'medecin', 'secretaire', 'comptable', 'infirmier'])->default('patient');
+            $table->enum('role', ['patient', 'medecin', 'secretaire', 'comptable'])->default('patient');
             $table->rememberToken();
             $table->timestamps();
         });

@@ -8,7 +8,6 @@ use App\Http\Controllers\DossierMedicalController;
 use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\RendezvousController;
 use App\Http\Controllers\MedecinController;
-use App\Http\Controllers\InfirmiersController;
 use App\Http\Controllers\MaterielsController;
 use App\Http\Controllers\ConsultationsController;
 use App\Http\Controllers\FactureController;
@@ -82,12 +81,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/prescriptions/dossier/{dossierId}', [PrescriptionController::class, 'getByDossier'])->name('prescriptions.by-dossier');
 
     // Routes de gestion des infirmiers
-    Route::get('/infirmiers', [InfirmiersController::class, 'index'])->name('infirmiers.index');
-    Route::get('/infirmiers/{id}', [InfirmiersController::class, 'show'])->name('infirmiers.show');
-    Route::post('/infirmiers', [InfirmiersController::class, 'store'])->name('infirmiers.store');
-    Route::put('/infirmiers/{id}', [InfirmiersController::class, 'update'])->name('infirmiers.update');
-    Route::delete('/infirmiers/{id}', [InfirmiersController::class, 'destroy'])->name('infirmiers.destroy');
-    Route::get('/infirmiers/specialite/{specialite}', [InfirmiersController::class, 'getBySpecialite'])->name('infirmiers.by-specialite');
+    // Route::get('/infirmiers', [InfirmiersController::class, 'index'])->name('infirmiers.index');
+    // Route::get('/infirmiers/{id}', [InfirmiersController::class, 'show'])->name('infirmiers.show');
+    // Route::post('/infirmiers', [InfirmiersController::class, 'store'])->name('infirmiers.store');
+    // Route::put('/infirmiers/{id}', [InfirmiersController::class, 'update'])->name('infirmiers.update');
+    // Route::delete('/infirmiers/{id}', [InfirmiersController::class, 'destroy'])->name('infirmiers.destroy');
+    // Route::get('/infirmiers/specialite/{specialite}', [InfirmiersController::class, 'getBySpecialite'])->name('infirmiers.by-specialite');
 
     // Routes de gestion des matériels
     Route::get('/materiels', [MaterielsController::class, 'index'])->name('materiels.index');

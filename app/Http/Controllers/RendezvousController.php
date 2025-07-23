@@ -46,7 +46,7 @@ class RendezvousController extends Controller
     {
         $request->validate([
             'patient_id' => 'required|exists:patients,id',
-            // 'medecin_id' => 'required|exists:medecins,id',
+            'medecin_id' => 'required|exists:medecins,id',
             'date_rdv' => 'required|date|after:now',
             'heure_rdv' => 'required|date_format:H:i',
         ]);
