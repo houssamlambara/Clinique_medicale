@@ -63,11 +63,11 @@
                     <p class="text-sm opacity-90 mt-1">Consulter mes prescriptions</p>
                 </a>
 
-                <button onclick="loadNotifications()" class="bg-gradient-to-r from-purple-500 to-purple-600 text-white p-6 rounded-xl text-center hover:from-purple-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-lg">
+                <a href="/patient/notifications" class="bg-gradient-to-r from-purple-500 to-purple-600 text-white p-6 rounded-xl text-center hover:from-purple-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-lg">
                     <i class="fas fa-bell text-3xl mb-3"></i>
                     <div class="font-semibold text-lg">Notifications</div>
                     <p class="text-sm opacity-90 mt-1">Voir mes notifications</p>
-                </button>
+                </a>
             </div>
         </div>
     </main>
@@ -86,11 +86,6 @@
             localStorage.removeItem('auth_token');
             localStorage.removeItem('user_data');
             window.location.href = '/login';
-        }
-
-        // Charger les notifications (fonction simplifiée)
-        function loadNotifications() {
-            alert('Fonctionnalité en cours de développement');
         }
 
         // Initialiser

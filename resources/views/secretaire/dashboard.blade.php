@@ -33,7 +33,7 @@
             <!-- Actions Rapides -->
             <div>
                 <h2 class="text-lg font-medium text-gray-900 mb-4">Actions Rapides</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <a href="/secretaire/rendezvous" class="bg-blue-500 text-white p-6 rounded-lg hover:bg-blue-600 transition duration-200 text-center">
                         <i class="fas fa-calendar-plus text-3xl mb-3"></i>
                         <div class="text-lg font-semibold">Gestion des Rendez-vous</div>
@@ -50,6 +50,12 @@
                         <i class="fas fa-user-md text-3xl mb-3"></i>
                         <div class="text-lg font-semibold">Espace Médecins</div>
                         <div class="text-sm opacity-90 mt-1">Accéder aux informations des médecins</div>
+                    </a>
+
+                    <a href="/secretaire/notifications" class="bg-orange-500 text-white p-6 rounded-lg hover:bg-orange-600 transition duration-200 text-center">
+                        <i class="fas fa-bell text-3xl mb-3"></i>
+                        <div class="text-lg font-semibold">Notifications</div>
+                        <div class="text-sm opacity-90 mt-1">Envoyer des notifications aux patients</div>
                     </a>
                 </div>
             </div>

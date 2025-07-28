@@ -12,6 +12,7 @@ use App\Http\Controllers\MaterielsController;
 use App\Http\Controllers\ConsultationsController;
 use App\Http\Controllers\FactureController;
 use App\Http\Controllers\DepenseController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -127,4 +128,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/depenses/{id}', [DepenseController::class, 'update'])->name('depenses.update');
     Route::delete('/depenses/{id}', [DepenseController::class, 'destroy'])->name('depenses.destroy');
     Route::post('/depenses/{id}/payer', [DepenseController::class, 'marquerCommePayer'])->name('depenses.marquer-payee');
+
+    // Routes de gestion des notifications
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications', [NotificationController::class, 'store'])->name('notifications.store');
+    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
+    Route::get('/notifications/patient/{patientId}', [NotificationController::class, 'getByPatient'])->name('notifications.by-patient');
 });

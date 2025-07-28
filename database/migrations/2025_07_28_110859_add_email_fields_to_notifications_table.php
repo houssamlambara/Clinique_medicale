@@ -11,12 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('notifications', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('patient_id')->constrained();
-            $table->string("type");
-            $table->text("message");
-            $table->timestamps();
+        Schema::table('notifications', function (Blueprint $table) {
+            $table->boolean('email_sent')->default(false)->after('message');
+            $table->timestamp('sent_at')->nullable()->after('email_sent');
         });
     }
 
@@ -25,6 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('notifications');
+        Schema::table('notifications', function (Blueprint $table) {
+            $table->dropColumn(['email_sent', 'sent_at']);
+        });
     }
 };

@@ -2,10 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PatientController;
-use Illuminate\Http\Request;
 
 Route::get('/', function () {
     return view('welcome');
@@ -18,112 +16,92 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Route pour rediriger après connexion API - Accès libre
-Route::get('/patient/dashboard', function (Request $request) {
-    Log::info('Accès libre à /patient/dashboard');
+// Routes Patient
+Route::get('/patient/dashboard', function () {
     return view('patient.dashboard');
 })->name('patient.dashboard');
 
-// Route pour la liste des rendez-vous - Accès libre
-Route::get('/rendezvous', function (Request $request) {
-    Log::info('Accès libre à /rendezvous');
+Route::get('/rendezvous', function () {
     return view('patient.rendezvous');
 })->name('rendezvous.index');
 
-// Route pour la liste des consultations - Accès libre
-Route::get('/consultations', function (Request $request) {
-    Log::info('Accès libre à /consultations');
+Route::get('/consultations', function () {
     return view('patient.consultations');
 })->name('consultations.index');
 
-// Route pour les consultations du patient - Accès libre
-Route::get('/patient/consultations', function (Request $request) {
-    Log::info('Accès libre à /patient/consultations');
+Route::get('/patient/consultations', function () {
     return view('patient.consultations');
 })->name('patient.consultations');
 
-// Route pour le dashboard médecin - Accès libre
-Route::get('/medecin/dashboard', function (Request $request) {
-    Log::info('Accès libre à /medecin/dashboard');
-    return view('medecin.dashboard');
-})->name('medecin.dashboard');
-
-// Route pour les consultations du médecin - Accès libre
-Route::get('/medecin/consultations', function (Request $request) {
-    Log::info('Accès libre à /medecin/consultations');
-    return view('medecin.consultations');
-})->name('medecin.consultations');
-
-// Route pour les rendez-vous du médecin - Accès libre
-Route::get('/medecin/rendezvous', function (Request $request) {
-    Log::info('Accès libre à /medecin/rendezvous');
-    return view('medecin.rendezvous');
-})->name('medecin.rendezvous');
-
-// Route pour les patients du médecin - Accès libre
-Route::get('/medecin/patients', function (Request $request) {
-    Log::info('Accès libre à /medecin/patients');
-    return view('medecin.patients');
-})->name('medecin.patients');
-
-// Route pour les dossiers médicaux du médecin - Accès libre
-Route::get('/medecin/dossiers', function (Request $request) {
-    Log::info('Accès libre à /medecin/dossiers');
-    return view('medecin.dossiers');
-})->name('medecin.dossiers');
-
-// Route pour les dossiers médicaux du patient - Accès libre
-Route::get('/patient/dossiers', function (Request $request) {
-    Log::info('Accès libre à /patient/dossiers');
+Route::get('/patient/dossiers', function () {
     return view('patient.dossiers');
 })->name('patient.dossiers');
 
-// Route pour les prescriptions du médecin - Accès libre
-Route::get('/medecin/prescriptions', function (Request $request) {
-    Log::info('Accès libre à /medecin/prescriptions');
-    return view('medecin.prescriptions');
-})->name('medecin.prescriptions');
-
-// Route pour les prescriptions du patient - Accès libre
-Route::get('/patient/prescriptions', function (Request $request) {
-    Log::info('Accès libre à /patient/prescriptions');
+Route::get('/patient/prescriptions', function () {
     return view('patient.prescriptions');
 })->name('patient.prescriptions');
 
-// Route pour le dashboard comptable - Accès libre
-Route::get('/comptable/dashboard', function (Request $request) {
-    Log::info('Accès libre à /comptable/dashboard');
+Route::get('/patient/notifications', function () {
+    return view('patient.notifications');
+})->name('patient.notifications');
+
+// Routes Médecin
+Route::get('/medecin/dashboard', function () {
+    return view('medecin.dashboard');
+})->name('medecin.dashboard');
+
+Route::get('/medecin/consultations', function () {
+    return view('medecin.consultations');
+})->name('medecin.consultations');
+
+Route::get('/medecin/rendezvous', function () {
+    return view('medecin.rendezvous');
+})->name('medecin.rendezvous');
+
+Route::get('/medecin/patients', function () {
+    return view('medecin.patients');
+})->name('medecin.patients');
+
+Route::get('/medecin/dossiers', function () {
+    return view('medecin.dossiers');
+})->name('medecin.dossiers');
+
+Route::get('/medecin/prescriptions', function () {
+    return view('medecin.prescriptions');
+})->name('medecin.prescriptions');
+
+// Routes Comptable
+Route::get('/comptable/dashboard', function () {
     return view('comptable.dashboard');
 })->name('comptable.dashboard');
 
-// Route pour le dashboard de la secrétaire - Accès libre
-Route::get('/secretaire/dashboard', function (Request $request) {
-    Log::info('Accès libre à /secretaire/dashboard');
-    return view('secretaire.dashboard');
-})->name('secretaire.dashboard');
-
-// Route pour la gestion des rendez-vous de la secrétaire - Accès libre
-Route::get('/secretaire/rendezvous', function (Request $request) {
-    Log::info('Accès libre à /secretaire/rendezvous');
-    return view('secretaire.rendezvous');
-})->name('secretaire.rendezvous');
-
-// Route pour la gestion des factures - Accès libre
-Route::get('/comptable/factures', function (Request $request) {
-    Log::info('Accès libre à /comptable/factures');
+Route::get('/comptable/factures', function () {
     return view('comptable.factures');
 })->name('comptable.factures');
 
-// Route pour la gestion des dépenses - Accès libre
-Route::get('/comptable/depenses', function (Request $request) {
-    Log::info('Accès libre à /comptable/depenses');
+Route::get('/comptable/depenses', function () {
     return view('comptable.depenses');
 })->name('comptable.depenses');
 
+// Routes Secrétaire
+Route::get('/secretaire/dashboard', function () {
+    return view('secretaire.dashboard');
+})->name('secretaire.dashboard');
+
+Route::get('/secretaire/rendezvous', function () {
+    return view('secretaire.rendezvous');
+})->name('secretaire.rendezvous');
+
+Route::get('/secretaire/notifications', function () {
+    return view('secretaire.notifications');
+})->name('secretaire.notifications');
+
+// Route de redirection tokens
 Route::get('/auth/token/{token}', function ($token) {
     return redirect('/login')->with('message', 'Veuillez vous connecter via le formulaire');
 })->name('auth.token');
 
+// Routes protégées par authentification
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
         $user = Auth::user();
@@ -143,6 +121,7 @@ Route::middleware('auth')->group(function () {
         }
     })->name('dashboard');
 
+    // Routes de gestion des patients
     Route::get('/patients', [PatientController::class, 'index'])->name('patients.index');
     Route::get('/patients/create', [PatientController::class, 'create'])->name('patients.create');
     Route::post('/patients', [PatientController::class, 'store'])->name('patients.store');

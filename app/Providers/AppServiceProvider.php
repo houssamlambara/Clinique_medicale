@@ -12,6 +12,7 @@ use App\Interfaces\IMaterielRepository;
 use App\Interfaces\IConsultationRepository;
 use App\Interfaces\IFactureRepository;
 use App\Interfaces\IDepenseRepository;
+use App\Interfaces\INotificationRepository;
 use App\Repositories\PatientRepository;
 use App\Repositories\DossierMedicalRepository;
 use App\Repositories\PrescriptionRepository;
@@ -21,6 +22,7 @@ use App\Repositories\MaterielRepository;
 use App\Repositories\ConsultationRepository;
 use App\Repositories\FactureRepository;
 use App\Repositories\DepenseRepository;
+use App\Repositories\NotificationRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -39,6 +41,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(IConsultationRepository::class, ConsultationRepository::class);
         $this->app->bind(IFactureRepository::class, FactureRepository::class);
         $this->app->bind(IDepenseRepository::class, DepenseRepository::class);
+        $this->app->bind(INotificationRepository::class, NotificationRepository::class);
     }
 
     /**

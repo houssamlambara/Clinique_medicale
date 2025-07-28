@@ -7,6 +7,7 @@ use App\Interfaces\IDossierMedicalRepository;
 use App\Models\Patient;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class PatientController extends Controller
 {
@@ -24,6 +25,7 @@ class PatientController extends Controller
     public function index(): JsonResponse
     {
         $patients = $this->patientRepository->getAll();
+        
         return response()->json([
             'success' => true,
             'data' => $patients
