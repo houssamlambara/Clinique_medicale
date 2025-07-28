@@ -13,14 +13,6 @@ class NotificationRepository implements INotificationRepository
         return Notification::with('patient.user')->orderBy('created_at', 'desc')->get();
     }
 
-    public function getByPatient(int $patientId): Collection
-    {
-        return Notification::where('patient_id', $patientId)
-            ->with('patient.user')
-            ->orderBy('created_at', 'desc')
-            ->get();
-    }
-
     public function create(array $data): Notification
     {
         return Notification::create($data);

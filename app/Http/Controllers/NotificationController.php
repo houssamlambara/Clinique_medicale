@@ -80,13 +80,4 @@ class NotificationController extends Controller
             ], 500);
         }
     }
-
-    public function getByPatient(int $patientId): JsonResponse
-    {
-        $notifications = $this->notificationRepository->getByPatient($patientId);
-        return response()->json([
-            'success' => true,
-            'data' => $notifications
-        ]);
-    }
 }

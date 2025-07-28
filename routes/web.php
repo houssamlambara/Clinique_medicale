@@ -41,10 +41,6 @@ Route::get('/patient/prescriptions', function () {
     return view('patient.prescriptions');
 })->name('patient.prescriptions');
 
-Route::get('/patient/notifications', function () {
-    return view('patient.notifications');
-})->name('patient.notifications');
-
 // Routes Médecin
 Route::get('/medecin/dashboard', function () {
     return view('medecin.dashboard');

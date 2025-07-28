@@ -133,5 +133,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications', [NotificationController::class, 'store'])->name('notifications.store');
     Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
-    Route::get('/notifications/patient/{patientId}', [NotificationController::class, 'getByPatient'])->name('notifications.by-patient');
 });
