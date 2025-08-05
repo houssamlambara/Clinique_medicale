@@ -136,7 +136,6 @@
                                 </h4>
                                 <select id="patientSelect" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                     <option value="">Sélectionnez un patient</option>
-                                    <!-- Les patients seront chargés par JavaScript -->
                                 </select>
                             </div>
 
@@ -147,7 +146,6 @@
                                 </h4>
                                 <select id="medecinSelect" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                     <option value="">Sélectionnez un médecin</option>
-                                    <!-- Les médecins seront chargés par JavaScript -->
                                 </select>
                             </div>
 
@@ -315,7 +313,6 @@
                                 </h4>
                                 <select id="editPatientSelect" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                     <option value="">Sélectionnez un patient</option>
-                                    <!-- Les patients seront chargés par JavaScript -->
                                 </select>
                             </div>
 
@@ -326,7 +323,6 @@
                                 </h4>
                                 <select id="editMedecinSelect" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                     <option value="">Sélectionnez un médecin</option>
-                                    <!-- Les médecins seront chargés par JavaScript -->
                                 </select>
                             </div>
 
