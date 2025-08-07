@@ -1,6 +1,6 @@
-// Variables globales pour stocker les données
 let patients = [];
 let medecins = [];
+let rendezvous = [];
 let selectedDate = null;
 let selectedTime = null;
 let selectedPatient = null;
@@ -8,7 +8,13 @@ let selectedDoctor = null;
 let currentEditRendezVousId = null;
 let currentMonth = new Date();
 
-// Initialisation au chargement de la page
+function formatDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     loadPatients();
     loadMedecins();
@@ -24,6 +30,7 @@ function loadRendezVous() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
+            rendezvous = data.data;
             displayRendezVous(data.data);
         } else {
             showError(data.message || 'Erreur lors du chargement des rendez-vous');
@@ -44,9 +51,6 @@ function loadPatients() {
         if (data.success) {
             patients = data.data;
             populatePatientSelects(data.data);
-            if (document.getElementById('rendezvous-list').children.length === 0) {
-                loadRendezVous();
-            }
         }
     })
     .catch(error => console.error('Erreur:', error));
@@ -61,9 +65,6 @@ function loadMedecins() {
         if (data.success) {
             medecins = data.data;
             populateMedecinSelects(data.data);
-            if (document.getElementById('rendezvous-list').children.length === 0) {
-                loadRendezVous();
-            }
         }
     })
     .catch(error => console.error('Erreur:', error));
@@ -172,7 +173,6 @@ function createRendezVousElement(rdv) {
     `;
 }
 
-// Remplit les listes déroulantes des patients et médecins
 function populatePatientSelects(patients) {
     const options = patients.map(patient => 
         `<option value="${patient.id}">${patient.user.nom} ${patient.user.prenom}</option>`
@@ -311,7 +311,6 @@ function deleteRendezVous(rdvId) {
     }
 }
 
-// Configuration des événements des boutons
 function initEventListeners() {
     document.getElementById('confirmButton').addEventListener('click', function() {
         if (!selectedDate || !selectedTime || !selectedPatient || !selectedDoctor) {
@@ -362,7 +361,6 @@ function initEventListeners() {
     });
 }
 
-// Fonctions utilitaires
 function getAuthHeaders() {
     const token = localStorage.getItem('auth_token');
     return {
@@ -393,7 +391,6 @@ function showError(message) {
     }, 3000);
 }
 
-// Système de calendrier unifié (fonctionne pour ajout et modification)
 function initCalendar(mode = 'add') {
     renderCalendar(mode);
     setupCalendarEventListeners(mode);
@@ -427,14 +424,14 @@ function renderCalendar(mode = 'add') {
         
         if (date.getMonth() === month) {
             dayElement.textContent = date.getDate();
-            dayElement.dataset.date = date.toISOString().split('T')[0];
+            dayElement.dataset.date = formatDate(date);
             
-            const today = new Date().toISOString().split('T')[0];
-            if (date.toISOString().split('T')[0] === today) {
+            const today = formatDate(new Date());
+            if (formatDate(date) === today) {
                 dayElement.classList.add('bg-blue-100', 'font-semibold');
             }
             
-            if (selectedDate === date.toISOString().split('T')[0]) {
+            if (selectedDate === formatDate(date)) {
                 dayElement.classList.add('bg-blue-500', 'text-white');
             }
         } else {
@@ -455,7 +452,7 @@ function setupCalendarEventListeners(mode = 'add') {
         if (mode === 'edit') {
             const currentDate = new Date(selectedDate);
             currentDate.setMonth(currentDate.getMonth() - 1);
-            selectedDate = currentDate.toISOString().split('T')[0];
+            selectedDate = formatDate(currentDate);
         } else {
             currentMonth.setMonth(currentMonth.getMonth() - 1);
         }
@@ -469,7 +466,7 @@ function setupCalendarEventListeners(mode = 'add') {
         if (mode === 'edit') {
             const currentDate = new Date(selectedDate);
             currentDate.setMonth(currentDate.getMonth() + 1);
-            selectedDate = currentDate.toISOString().split('T')[0];
+            selectedDate = formatDate(currentDate);
         } else {
             currentMonth.setMonth(currentMonth.getMonth() + 1);
         }
@@ -484,6 +481,7 @@ function setupCalendarEventListeners(mode = 'add') {
             selectedDate = e.target.dataset.date;
             renderCalendar(mode);
             updateSelectedDateDisplay(mode);
+            chargerCreneauxReserves(selectedDate);
             updateAppointmentSummary(mode);
             checkConfirmButton(mode);
         }
@@ -495,6 +493,11 @@ function setupTimeSlotEventListeners(mode = 'add') {
     
     document.querySelectorAll(selector).forEach(slot => {
         slot.addEventListener('click', function() {
+            if (this.classList.contains('reserve')) {
+                showError('Ce créneau est déjà réservé');
+                return;
+            }
+            
             document.querySelectorAll(selector).forEach(s => {
                 s.classList.remove('bg-blue-500', 'text-white');
                 s.classList.add('border-gray-300');
@@ -522,6 +525,7 @@ function setupSelectEventListeners(mode = 'add') {
     
     document.getElementById(medecinSelectId).addEventListener('change', function() {
         selectedDoctor = this.value;
+        if (selectedDate) chargerCreneauxReserves(selectedDate);
         updateAppointmentSummary(mode);
         checkConfirmButton(mode);
     });
@@ -580,6 +584,32 @@ function checkConfirmButton(mode = 'add') {
     } else {
         confirmButton.disabled = true;
     }
+}
+
+async function chargerCreneauxReserves(date) {
+    if (!selectedDoctor) return;
+    
+    const creneauxReservesPourMedecin = rendezvous
+        .filter(rdv => rdv.date_rdv === date && rdv.medecin_id == selectedDoctor)
+        .map(rdv => rdv.heure_rdv.substring(0, 5));
+    
+    mettreAJourAffichageCreneaux(creneauxReservesPourMedecin);
+}
+
+function mettreAJourAffichageCreneaux(creneauxReserves) {
+    document.querySelectorAll('.time-slot').forEach(slot => {
+        const heure = slot.dataset.time;
+        
+        if (creneauxReserves.includes(heure)) {
+            slot.classList.add('reserve');
+            slot.classList.remove('hover:bg-blue-50', 'cursor-pointer');
+            slot.classList.add('bg-gray-100', 'text-gray-400', 'cursor-not-allowed');
+        } else {
+            slot.classList.remove('reserve');
+            slot.classList.add('hover:bg-blue-50', 'cursor-pointer');
+            slot.classList.remove('bg-gray-100', 'text-gray-400', 'cursor-not-allowed');
+        }
+    });
 }
 
 function resetCalendarSelection() {

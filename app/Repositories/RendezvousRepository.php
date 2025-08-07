@@ -57,4 +57,14 @@ class RendezvousRepository implements IRendezvousRepository
             ->orderBy('date_rdv', 'asc')
             ->get();
     }
+
+    public function getCreneauxReserves(string $date): array
+    {
+        return Rendezvous::where('date_rdv', $date)
+            ->pluck('heure_rdv')
+            ->map(function($time) {
+                return substr($time, 0, 5); // HH:MM
+            })
+            ->toArray();
+    }
 } 

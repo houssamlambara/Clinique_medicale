@@ -154,4 +154,13 @@ class RendezvousController extends Controller
             'data' => $rendezvous
         ]);
     }
+
+    public function getCreneauxReserves(string $date): JsonResponse
+    {
+        $creneauxReserves = $this->rendezvousRepository->getCreneauxReserves($date);
+        return response()->json([
+            'success' => true,
+            'data' => $creneauxReserves
+        ]);
+    }
 }

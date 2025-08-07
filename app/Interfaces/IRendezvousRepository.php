@@ -14,4 +14,5 @@ interface IRendezvousRepository
     public function delete(int $id): bool;
     public function getByPatientId(int $patientId): Collection;
     public function getByMedecinId(int $medecinId): Collection;
+    public function getCreneauxReserves(string $date): array;
 } 

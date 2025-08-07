@@ -41,12 +41,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Routes de rendez-vous
     Route::get('/rendezvous', [RendezvousController::class, 'index'])->name('rendezvous.index');
-    Route::get('/rendezvous/{id}', [RendezvousController::class, 'show'])->name('rendezvous.show');
     Route::post('/rendezvous', [RendezvousController::class, 'store'])->name('rendezvous.store');
+    Route::get('/rendezvous/{id}', [RendezvousController::class, 'show'])->name('rendezvous.show');
     Route::put('/rendezvous/{id}', [RendezvousController::class, 'update'])->name('rendezvous.update');
     Route::delete('/rendezvous/{id}', [RendezvousController::class, 'destroy'])->name('rendezvous.destroy');
     Route::get('/rendezvous/patient/{patientId}', [RendezvousController::class, 'getByPatient'])->name('rendezvous.by-patient');
     Route::get('/rendezvous/medecin/{medecinId}', [RendezvousController::class, 'getByMedecin'])->name('rendezvous.by-medecin');
+    Route::get('/rendezvous/creneaux-reserves/{date}', [RendezvousController::class, 'getCreneauxReserves'])->name('rendezvous.creneaux-reserves');
 
     // Routes de gestion des médecins
     Route::get('/medecins', [MedecinController::class, 'index'])->name('medecins.index');
