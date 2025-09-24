@@ -25,7 +25,6 @@ use App\Http\Controllers\NotificationController;
 |
 */
 
-// Routes d'authentification (publiques)
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
 
