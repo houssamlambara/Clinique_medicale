@@ -24,7 +24,7 @@ use App\Http\Controllers\NotificationController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
+//vfvfd
 // Routes d'authentification (publiques)
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
