@@ -1,21 +1,139 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<div align="center">
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# 🏥 Clinique Médicale
 
-# 🏥 Clinique Médicale – Application de gestion
+### Système de gestion complet pour cliniques médicales
 
-![Laravel Logo](https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg)
+[![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
+[![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://php.net)
+[![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
 
-## Présentation
+</div>
 
-Ce projet est une application web complète pour la gestion d’une clinique médicale. Elle permet d’administrer les patients, médecins, rendez-vous, consultations, dossiers médicaux, prescriptions, factures, dépenses, matériels, notifications et rapports, avec une interface dédiée pour chaque rôle utilisateur.
+---
 
-## Fonctionnalités
+## 📋 À propos du projet
+
+**Clinique Médicale** est une application web moderne et complète conçue pour digitaliser et optimiser la gestion quotidienne d'une clinique médicale. Développée avec Laravel 12 et une architecture Repository Pattern, elle offre une solution robuste, évolutive et sécurisée pour gérer patients, médecins, consultations, rendez-vous, facturation et bien plus encore.
+
+### ✨ Points forts
+
+- 🔐 **Système multi-rôles** : Patient, Médecin, Secrétaire, Comptable
+- 🏗️ **Architecture propre** : Repository Pattern avec injection de dépendances
+- 🔄 **API RESTful complète** : Toutes les entités accessibles via API
+- 📧 **Notifications email** : Rappels automatiques et alertes
+- 💳 **Gestion financière** : Factures, paiements, dépenses
+- 📊 **Tableaux de bord dédiés** : Interface personnalisée par rôle
+
+---
+
+## 🚀 Fonctionnalités
+
+### 👥 Gestion des utilisateurs
+- Authentification sécurisée avec Laravel Sanctum
+- Système de rôles et permissions (Patient, Médecin, Secrétaire, Comptable)
+- Profils utilisateurs personnalisés par rôle
+
+### 🩺 Gestion médicale
+- **Patients** : CRUD complet, dossier médical, historique des consultations
+- **Médecins** : Gestion des spécialités, numéro de licence, disponibilités
+- **Consultations** : Création, suivi du statut (en cours, terminée, annulée)
+- **Dossiers médicaux** : Notes, antécédents, prescriptions associées
+- **Prescriptions** : Gestion des médicaments et traitements
+
+### 📅 Gestion des rendez-vous
+- Prise de rendez-vous avec créneau horaire
+- Vérification des disponibilités
+- Notifications automatiques
+- Association patient-médecin
+
+### 💰 Gestion financière
+- **Factures** : Génération automatique, suivi des paiements
+- **Dépenses** : Catégorisation, suivi des paiements
+- **Matériels** : Inventaire et gestion du stock
+
+### 📧 Notifications
+- Envoi d'emails automatiques
+- Rappels de rendez-vous
+- Notifications par type (rendez-vous, consultation, résultats, information)
+
+### 📊 Rapports et statistiques
+- Génération de rapports médicaux
+- Tableau de bord avec indicateurs clés
+
+---
+
+## 🛠️ Technologies utilisées
+
+### Backend
+- **Framework** : Laravel 12
+- **Langage** : PHP 8.2+
+- **ORM** : Eloquent
+- **Authentification** : Laravel Sanctum (API tokens)
+- **Architecture** : Repository Pattern + Dependency Injection
+
+### Frontend
+- **Build tool** : Vite
+- **CSS Framework** : Tailwind CSS 4.0
+- **Templating** : Blade
+- **HTTP Client** : Axios
+
+### Base de données
+- Support MySQL/PostgreSQL/SQLite
+- Migrations complètes
+- Seeders pour données de test
+
+### Outils de développement
+- **Tests** : PHPUnit, Faker
+- **Code Quality** : Laravel Pint
+- **Container** : Laravel Sail (Docker)
+- **Debugging** : Laravel Collision
+
+---
+
+## 📁 Architecture du projet
+
+```
+Clinique_medicale/
+├── app/
+│   ├── Http/
+│   │   └── Controllers/        # Contrôleurs (Auth, Patient, Médecin, etc.)
+│   ├── Models/                 # Modèles Eloquent (User, Patient, Médecin, etc.)
+│   ├── Repositories/           # Implémentations des repositories
+│   ├── Interfaces/             # Interfaces des repositories
+│   ├── Mail/                   # Classes Mailable pour les emails
+│   └── Providers/              # Service Providers (injection de dépendances)
+├── database/
+│   ├── migrations/             # Migrations de base de données
+│   └── seeders/                # Seeders pour données de test
+├── resources/
+│   ├── views/
+│   │   ├── patient/            # Vues pour les patients
+│   │   ├── medecin/            # Vues pour les médecins
+│   │   ├── secretaire/         # Vues pour les secrétaires
+│   │   ├── comptable/          # Vues pour les comptables
+│   │   └── emails/             # Templates d'emails
+│   └── css/                    # Styles CSS/Tailwind
+├── routes/
+│   ├── web.php                 # Routes web
+│   ├── api.php                 # Routes API
+│   └── console.php             # Commandes Artisan
+└── tests/                      # Tests unitaires et fonctionnels
+```
+
+---
+
+## 🔧 Installation
+
+### Prérequis
+
+- PHP >= 8.2
+- Composer
+- Node.js >= 18.x
+- npm ou yarn
+- MySQL/PostgreSQL/SQLite
+
+### Étapes d'installation
 
 - Gestion des utilisateurs (patients, médecins, secrétaire, comptable) avec rôles et authentification
 - Gestion des patients (CRUD, dossier médical, historique)
